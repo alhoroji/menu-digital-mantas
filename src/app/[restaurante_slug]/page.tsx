@@ -1,8 +1,9 @@
 // src/app/[restaurante_slug]/page.tsx
 'use client';
 
-import { BellRing, UtensilsCrossed, Fish, Flame, Wine, Soup } from 'lucide-react';
+import { BellRing } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useMenuStatus } from '@/features/menu/hooks/useMenuStatus';
 import { SpotlightBanner } from '@/features/menu/components/SpotlightBanner';
 import { CartFloatingButton } from '@/features/cart/components/CartFloatingButton';
@@ -16,45 +17,69 @@ const mockRestaurant = {
   }
 };
 
+// URL directa a tu Storage público en Supabase
+const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
+
 function BentoCategoryGrid() {
   return (
     <section className="px-5 w-full mx-auto pb-8">
       <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Explorar Carta</h3>
       
-      <div className="grid grid-cols-2 gap-3 auto-rows-[110px]">
-         <Link href="/mantas/categoria/cat_marinos" className="col-span-2 rounded-[1.5rem] p-4 flex flex-col justify-between relative overflow-hidden border border-zinc-800/50 bg-gradient-to-br from-[#1E293B] to-zinc-950 group active:scale-[0.98] transition-all text-left">
-            <Fish size={24} className="text-blue-400 group-hover:text-blue-300 transition-colors" />
-            <div>
-              <h4 className="text-lg font-medium text-white mb-0.5">Platos Marinos</h4>
-              <p className="text-[10px] text-zinc-400">Ceviches, Leche de Tigre y Combos</p>
+      <div className="grid grid-cols-2 gap-3 auto-rows-[130px]">
+         
+         {/* PLATOS MARINOS */}
+         <Link href="/mantas/categoria/cat_marinos" className="col-span-2 rounded-[1.5rem] relative overflow-hidden group active:scale-[0.98] transition-all text-left">
+            <Image 
+              src={`${BUCKET_URL}/platosmarinos.jpg`} 
+              alt="Platos Marinos" 
+              fill 
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute bottom-4 left-4">
+              <h4 className="text-lg font-bold text-white mb-0.5">Platos Marinos</h4>
+              <p className="text-[10px] text-zinc-300">Ceviches, Leche de Tigre y Combos</p>
             </div>
          </Link>
 
-         <Link href="/mantas/categoria/cat_criollos" className="rounded-[1.5rem] p-4 flex flex-col justify-between bg-zinc-900 border border-zinc-800/50 active:scale-95 transition-all text-left group">
-            <UtensilsCrossed size={20} className="text-orange-500 group-hover:text-orange-400 transition-colors" />
-            <div>
-              <h4 className="text-base font-medium text-white leading-tight mb-0.5">Platos<br/>Criollos</h4>
-              <p className="text-[9px] text-zinc-500">Lomo, Chaufa...</p>
+         {/* PLATOS CRIOLLOS */}
+         <Link href="/mantas/categoria/cat_criollos" className="rounded-[1.5rem] relative overflow-hidden active:scale-95 transition-all text-left group">
+            <Image 
+              src={`${BUCKET_URL}/platos_criollos.jpg`} 
+              alt="Platos Criollos" 
+              fill 
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+            <div className="absolute bottom-4 left-4">
+              <h4 className="text-base font-bold text-white leading-tight mb-0.5">Platos<br/>Criollos</h4>
             </div>
          </Link>
 
-         <Link href="/mantas/categoria/cat_pollo" className="rounded-[1.5rem] p-4 flex flex-col justify-between bg-zinc-900 border border-zinc-800/50 active:scale-95 transition-all text-left group">
-            <Flame size={20} className="text-red-500 group-hover:text-red-400 transition-colors" />
-            <div>
-              <h4 className="text-base font-medium text-white leading-tight mb-0.5">Pollo a<br/>la Brasa</h4>
-              <p className="text-[9px] text-zinc-500">Al horno de leña</p>
+         {/* POLLO A LA BRASA */}
+         <Link href="/mantas/categoria/cat_pollo" className="rounded-[1.5rem] relative overflow-hidden active:scale-95 transition-all text-left group">
+            <Image 
+              src={`${BUCKET_URL}/pollo_ala_brasa.jpg`} 
+              alt="Pollo a la Brasa" 
+              fill 
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+            <div className="absolute bottom-4 left-4">
+              <h4 className="text-base font-bold text-white leading-tight mb-0.5">Pollo a<br/>la Brasa</h4>
             </div>
          </Link>
 
-         <Link href="/mantas/categoria/cat_entradas" className="rounded-[1.5rem] p-4 flex flex-col justify-between bg-zinc-900 border border-zinc-800/50 active:scale-95 transition-all text-left group">
-            <Soup size={20} className="text-yellow-500 group-hover:text-yellow-400 transition-colors" />
-            <h4 className="text-base font-medium text-white leading-tight">Entradas</h4>
+         {/* ENTRADAS */}
+         <Link href="/mantas/categoria/cat_entradas" className="rounded-[1.5rem] p-4 flex flex-col justify-end bg-zinc-900 border border-zinc-800/50 active:scale-95 transition-all text-left group">
+            <h4 className="text-base font-bold text-white leading-tight">Entradas</h4>
          </Link>
 
-         <Link href="/mantas/categoria/cat_bebidas" className="rounded-[1.5rem] p-4 flex flex-col justify-between bg-zinc-900 border border-zinc-800/50 active:scale-95 transition-all text-left group">
-            <Wine size={20} className="text-purple-500 group-hover:text-purple-400 transition-colors" />
-            <h4 className="text-base font-medium text-white leading-tight">Bebidas &<br/>Tragos</h4>
+         {/* BEBIDAS */}
+         <Link href="/mantas/categoria/cat_bebidas" className="rounded-[1.5rem] p-4 flex flex-col justify-end bg-zinc-900 border border-zinc-800/50 active:scale-95 transition-all text-left group">
+            <h4 className="text-base font-bold text-white leading-tight">Bebidas &<br/>Tragos</h4>
          </Link>
+
       </div>
     </section>
   );
@@ -68,7 +93,6 @@ export default function TenantMenuPage({ params }: { params: { restaurante_slug:
       className="min-h-screen font-sans w-full sm:max-w-md mx-auto overflow-x-hidden text-zinc-100 selection:bg-zinc-800 relative flex flex-col"
       style={{ backgroundColor: mockRestaurant.theme.background }}
     >
-      {/* HEADER SIMPLIFICADO Y MODERNO */}
       <header className="flex justify-between items-center px-5 pt-6 pb-4 w-full shrink-0">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tighter text-white">
