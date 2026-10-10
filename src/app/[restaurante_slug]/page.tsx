@@ -17,7 +17,6 @@ const mockRestaurant = {
   }
 };
 
-// URL directa a tu Storage público en Supabase
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
 
 function BentoCategoryGrid() {
@@ -34,6 +33,7 @@ function BentoCategoryGrid() {
               alt="Platos Marinos" 
               fill 
               className="object-cover transition-transform duration-500 group-hover:scale-105"
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
             <div className="absolute bottom-4 left-4">
@@ -49,6 +49,7 @@ function BentoCategoryGrid() {
               alt="Platos Criollos" 
               fill 
               className="object-cover transition-transform duration-500 group-hover:scale-105"
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             <div className="absolute bottom-4 left-4">
@@ -63,6 +64,7 @@ function BentoCategoryGrid() {
               alt="Pollo a la Brasa" 
               fill 
               className="object-cover transition-transform duration-500 group-hover:scale-105"
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             <div className="absolute bottom-4 left-4">

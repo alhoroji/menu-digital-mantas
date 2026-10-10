@@ -1,4 +1,5 @@
 // src/features/menu/components/SpotlightBanner.tsx
+import Image from 'next/image';
 import { Sparkles } from 'lucide-react';
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
@@ -12,11 +13,13 @@ export function SpotlightBanner({ status, primaryColor }: SpotlightBannerProps) 
   return (
     <div className="relative w-full h-[220px] rounded-[1.5rem] overflow-hidden group cursor-pointer shadow-xl">
       
-      {/* PRUEBA: Usamos un <img> clásico de HTML para forzar la carga directa */}
-      <img 
+      <Image 
         src={`${BUCKET_URL}/cevichemixto.jpg`}
         alt="Ceviche Mixto - Recomendación del Chef"
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        fill
+        className="object-cover transition-transform duration-700 group-hover:scale-105"
+        priority
+        unoptimized // <-- Esta es la clave para esquivar los errores de Vercel
       />
       
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
