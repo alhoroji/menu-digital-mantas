@@ -1,7 +1,7 @@
+// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
@@ -11,6 +11,17 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  // 👇 AQUÍ AGREGAMOS EL PERMISO PARA TUS FOTOS DE SUPABASE 👇
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'jclzrvizljglhhndkmvo.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
 };
 
