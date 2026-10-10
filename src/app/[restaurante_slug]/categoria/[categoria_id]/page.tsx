@@ -1,9 +1,9 @@
 // src/app/[restaurante_slug]/categoria/[categoria_id]/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { ArrowLeft, Search } from 'lucide-react';
-import { useRouter, useParams } from 'next/navigation'; // <-- Importamos useParams
+import { useRouter, useParams } from 'next/navigation';
 import { DishCard } from '@/features/menu/components/DishCard';
 import { DishDetailModal } from '@/features/menu/components/DishDetailModal';
 import { CartFloatingButton } from '@/features/cart/components/CartFloatingButton';
@@ -20,13 +20,10 @@ const categoriasDB: Record<string, { id: string; name: string; subcategories: st
 };
 
 const platosDB: Dish[] = [
-  // ENTRADAS
   { id: "e1", categoryId: "cat_entradas", subcategory: "Todas", name: "Tamal", description: "", price: { standard: 6 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "e2", categoryId: "cat_entradas", subcategory: "Todas", name: "Causa", description: "", price: { standard: 8 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "e3", categoryId: "cat_entradas", subcategory: "Todas", name: "Papa a la Huancaina", description: "", price: { standard: 6 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "e4", categoryId: "cat_entradas", subcategory: "Todas", name: "Crema de Ocopa", description: "", price: { standard: 6 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
-
-  // CRIOLLOS
   { id: "c1", categoryId: "cat_criollos", subcategory: "Todas", name: "Fettuccini a la Huancaina C/ Lomo al Jugo", description: "Pasta ricoperta di panna gialla condita, patatine fritte, mela, cipolla, pomodoro", price: { standard: 20 }, imageUrl: null, tags: ["Recomendado"], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "c2", categoryId: "cat_criollos", subcategory: "Todas", name: "Lomo Saltado de Carne", description: "Cipolla, pomodoro, manzo, pasta, salsa di soia e sale", price: { standard: 17 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "c3", categoryId: "cat_criollos", subcategory: "Todas", name: "Lomo Saltado de Pollo", description: "Cipolla, pomodoro, pollo, pasta, salsa di soia e sale", price: { standard: 16 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
@@ -34,8 +31,6 @@ const platosDB: Dish[] = [
   { id: "c5", categoryId: "cat_criollos", subcategory: "Todas", name: "Chaufa de Carne", description: "Riso, uovo, cipolla cinese, manzo, salsa di soia", price: { standard: 12 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "c6", categoryId: "cat_criollos", subcategory: "Todas", name: "Chaufa de Pollo", description: "Riso, pollo, uovo, cipolla cinese, salsa di soia", price: { standard: 10 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "c7", categoryId: "cat_criollos", subcategory: "Todas", name: "Tallarin Saltado de Carne", description: "Pasta, salsa de soia, pomodoro, cipolla manzo, cipolla cinese", price: { standard: 17 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
-
-  // MARINOS
   { id: "m1", categoryId: "cat_marinos", subcategory: "Entradas", name: "Leche de Tigre", description: "Succo di ceviche mixto, lime, sale e spezie", price: { standard: 12 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "m2", categoryId: "cat_marinos", subcategory: "Entradas", name: "Leche de Tigre Mantas", description: "Succo di ceviche mixto, lime, sale e spezie", price: { standard: 22 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "m3", categoryId: "cat_marinos", subcategory: "Entradas", name: "Causa Acevichada", description: "Torta de patate, persico marinato in lime e spezie varie", price: { standard: 16 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
@@ -59,8 +54,6 @@ const platosDB: Dish[] = [
   { id: "m21", categoryId: "cat_marinos", subcategory: "Adicionales", name: "Arroz con Mariscos Mantas", description: "Riso, frutti di mare, spezie", price: { standard: 20 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "m22", categoryId: "cat_marinos", subcategory: "Adicionales", name: "Chaufa de Mariscos", description: "Riso, salsa si soia, frutti di mare, uovo, cipolloti", price: { standard: 18 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "m23", categoryId: "cat_marinos", subcategory: "Adicionales", name: "Arroz de Puerto", description: "Riso, salsa si soia, frutti di mare, uovo, cipolloti e coreando", price: { standard: 20 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
-
-  // BEBIDAS
   { id: "b1", categoryId: "cat_bebidas", subcategory: "Todas", name: "Chicha Morada 1 Lt.", description: "", price: { standard: 10 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "b2", categoryId: "cat_bebidas", subcategory: "Todas", name: "Coca Cola", description: "", price: { standard: 5 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "b3", categoryId: "cat_bebidas", subcategory: "Todas", name: "Inca Kola Original", description: "", price: { standard: 10 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
@@ -71,56 +64,38 @@ const platosDB: Dish[] = [
   { id: "b8", categoryId: "cat_bebidas", subcategory: "Todas", name: "Birra Cusqueña", description: "", price: { standard: 4 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "b9", categoryId: "cat_bebidas", subcategory: "Todas", name: "Corona", description: "", price: { standard: 3 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "b10", categoryId: "cat_bebidas", subcategory: "Todas", name: "Coca Cola / The (Latina)", description: "", price: { standard: 2 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
-
-  // POLLO A LA BRASA
   { id: "p1", categoryId: "cat_pollo", subcategory: "Todas", name: "1/4 Pollo a la Brasa", description: "Bebite in lata, patatine fritte, insalata e 3 salse", price: { standard: 12, delivery: 12, table: 12 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "p2", categoryId: "cat_pollo", subcategory: "Todas", name: "Mezzo Pollo a la Brasa", description: "Bebite 1/1.2 Lt., patatine fritte, insalata e 3 salse", price: { standard: 25, delivery: 20, table: 25 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
   { id: "p3", categoryId: "cat_pollo", subcategory: "Todas", name: "1 Pollo a la Brasa Entero", description: "Bebite 1/1.2 Lt., patatine fritte, insalata e 3 salse", price: { standard: 40, delivery: 35, table: 40 }, imageUrl: null, tags: [], scheduleCondition: 'always', modifiers: [], isSoldOut: false },
 ];
 // --- FIN BASE DE DATOS TEMPORAL ---
 
-
-export default function CategoryView() {
+// 1. EXTRAEMOS LA LÓGICA A UN COMPONENTE INTERNO
+function CategoryContent() {
   const router = useRouter();
-  
-  // 1. Usamos useParams() para leer correctamente la URL en Next.js 15
   const params = useParams();
   const categoria_id = params?.categoria_id as string;
   
   const currentCategory = categoriasDB[categoria_id];
   
-  // Si no existe la categoría, mostramos error
   if (!currentCategory) {
     return <div className="p-10 text-white">Categoría no encontrada. Verifica la URL.</div>;
   }
 
-  // 2. Inicializamos la pestaña activa dinámicamente
   const [activeTab, setActiveTab] = useState<string>(currentCategory.subcategories[0]);
-  
-  // 3. Estados para el Modal
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
 
-  // 4. Conexión con Zustand (El cerebro del carrito)
   const addItemToCart = useCartStore(state => state.addItem);
 
-  // 5. Filtramos los platos de la base general según la categoría y pestaña actual
   const filteredDishes = platosDB.filter(
     dish => dish.categoryId === currentCategory.id && dish.subcategory === activeTab
   );
 
-  const handleAddDish = (dish: Dish) => {
-    setSelectedDish(dish); // Abre el modal visual
-  };
-
-  const handleConfirmAdd = (dish: Dish, quantity: number, notes: string) => {
-    // Cuando el usuario presiona "Agregar" en el Modal, esto lo inyecta a Zustand
-    addItemToCart(dish);
-  };
+  const handleAddDish = (dish: Dish) => setSelectedDish(dish);
+  const handleConfirmAdd = (dish: Dish, quantity: number, notes: string) => addItemToCart(dish);
 
   return (
     <main className="min-h-screen bg-[#09090B] text-zinc-100 font-sans mx-auto w-full sm:max-w-md pb-24 relative">
-      
-      {/* HEADER FIJO */}
       <header className="sticky top-0 z-40 bg-[#09090B]/90 backdrop-blur-md border-b border-zinc-800/50">
         <div className="flex items-center justify-between px-4 py-4">
           <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full active:bg-zinc-800 transition-colors">
@@ -132,7 +107,6 @@ export default function CategoryView() {
           </button>
         </div>
 
-        {/* TABS (Pestañas Deslizables) */}
         {currentCategory.subcategories.length > 1 && (
           <div className="w-full overflow-x-auto scrollbar-hide px-4 pb-3 flex gap-2 snap-x">
             {currentCategory.subcategories.map((sub) => (
@@ -152,7 +126,6 @@ export default function CategoryView() {
         )}
       </header>
 
-      {/* LISTADO DE PLATOS */}
       <section className="px-4 py-6 flex flex-col gap-4">
         {filteredDishes.length > 0 ? (
           filteredDishes.map(dish => (
@@ -166,7 +139,6 @@ export default function CategoryView() {
         )}
       </section>
 
-      {/* MODAL DEL PLATO (Bottom Sheet) */}
       <DishDetailModal 
         dish={selectedDish!} 
         isOpen={selectedDish !== null} 
@@ -174,9 +146,22 @@ export default function CategoryView() {
         onConfirm={handleConfirmAdd}
       />
 
-      {/* ISLA DINÁMICA (Carrito) */}
       <CartFloatingButton />
-
     </main>
+  );
+}
+
+// 2. EXPORTAMOS EL COMPONENTE PRINCIPAL ENVUELTO EN SUSPENSE
+export default function CategoryView() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#09090B] flex items-center justify-center">
+        <span className="text-[#E4B363] text-sm font-bold tracking-widest uppercase animate-pulse">
+          Cargando carta...
+        </span>
+      </div>
+    }>
+      <CategoryContent />
+    </Suspense>
   );
 }
