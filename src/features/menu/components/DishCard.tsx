@@ -1,6 +1,41 @@
 // src/features/menu/components/DishCard.tsx
+'use client';
+
+import React from 'react';
+import Image from 'next/image';
 import { Plus } from 'lucide-react';
 import { Dish } from '@/core/types/menu.types';
+
+const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
+
+// Sistema temático automatizado según la categoría del plato
+const CATEGORY_THEMES: Record<string, { banner: string; glow: string; textAccent: string }> = {
+  cat_marinos: {
+    banner: `${BUCKET_URL}/bannerplatosmarino.png`,
+    glow: '0 0 3px #00e5ff, 0 0 10px rgba(0, 229, 255, 0.55)',
+    textAccent: 'text-cyan-400',
+  },
+  cat_criollos: {
+    banner: `${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`,
+    glow: '0 0 3px #ff1744, 0 0 10px rgba(255, 23, 68, 0.55)',
+    textAccent: 'text-rose-400',
+  },
+  cat_pollo: {
+    banner: `${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`,
+    glow: '0 0 3px #ffab00, 0 0 10px rgba(255, 171, 0, 0.55)',
+    textAccent: 'text-amber-400',
+  },
+  cat_entradas: {
+    banner: `${BUCKET_URL}/bannerentrada-bebidas.png`,
+    glow: '0 0 3px #10b981, 0 0 9px rgba(16, 185, 129, 0.5)',
+    textAccent: 'text-emerald-400',
+  },
+  cat_bebidas: {
+    banner: `${BUCKET_URL}/bannerentrada-bebidas.png`,
+    glow: '0 0 3px #e040fb, 0 0 10px rgba(224, 64, 251, 0.55)',
+    textAccent: 'text-fuchsia-400',
+  },
+};
 
 interface DishCardProps {
   dish: Dish;
@@ -8,63 +43,86 @@ interface DishCardProps {
 }
 
 export function DishCard({ dish, onAdd }: DishCardProps) {
-  // Tomamos el precio de mesa por defecto, o el estándar si no hay
-  const displayPrice = dish.price.table || dish.price.standard;
+  // Resuelve el tema automáticamente o usa fallback seguro
+  const theme = CATEGORY_THEMES[dish.categoryId] || {
+    banner: `${BUCKET_URL}/tiramaestra.png`,
+    glow: '0 0 3px #ff3d00, 0 0 9px rgba(255, 61, 0, 0.5)',
+    textAccent: 'text-amber-400',
+  };
+
+  // Manejo resiliente del precio (€) soportando objeto o número
+  const rawPrice = typeof dish.price === 'number' 
+    ? dish.price 
+    : dish.price?.standard ?? 0;
+  const formattedPrice = `€${rawPrice.toFixed(2)}`;
 
   return (
-    <div 
+    <article
       onClick={() => onAdd(dish)}
-      className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 flex gap-4 cursor-pointer active:scale-[0.98] transition-transform group"
+      className="relative p-[1.5px] rounded-[1.4rem] overflow-hidden cursor-pointer active:scale-[0.99] transition-all group"
+      style={{ boxShadow: theme.glow }}
     >
-      {/* Información del Plato */}
-      <div className="flex-1 flex flex-col justify-center">
-        <h4 className="text-white font-medium mb-1 leading-tight">{dish.name}</h4>
-        
-        {dish.description && (
-          <p className="text-zinc-500 text-xs line-clamp-2 mb-2 leading-relaxed">
-            {dish.description}
-          </p>
-        )}
-        
-        <div className="flex items-center gap-2 mt-auto">
-          <span className="font-bold text-white text-sm">€{displayPrice.toFixed(2)}</span>
-          
-          {/* Etiquetas dinámicas (ej. "Recomendado") */}
-          {dish.tags?.map(tag => (
-            <span key={tag} className="text-[9px] bg-[#E4B363]/20 text-[#E4B363] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* 1. MARCO TEXTIL ANDINO (Paspartú de 1.5px) */}
+      <Image
+        src={theme.banner}
+        alt="Borde Textil Andino"
+        fill
+        className="object-cover pointer-events-none"
+        unoptimized
+      />
 
-      {/* Imagen y Botón Agregar */}
-      <div className="relative shrink-0">
-        {dish.imageUrl ? (
-          <div className="w-24 h-24 rounded-xl overflow-hidden bg-zinc-800">
-            <img 
-              src={dish.imageUrl} 
-              alt={dish.name} 
-              className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" 
-            />
-          </div>
-        ) : (
-          <div className="w-24 h-24 rounded-xl bg-zinc-800/30 border border-zinc-800 flex items-center justify-center">
-            <span className="text-zinc-600 text-[10px] text-center px-2">Sin imagen</span>
-          </div>
-        )}
+      {/* 2. CONTENEDOR INTERIOR OSCURO CON ALTO CONTRASTE */}
+      <div className="relative bg-[#0d0d12]/95 backdrop-blur-md rounded-[1.3rem] p-4 flex justify-between items-center gap-3.5 select-none">
         
-        {/* Botón flotante "+" */}
-        <button 
-          className="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-[0_4px_14px_rgba(255,255,255,0.25)] active:scale-90 transition-transform"
-          onClick={(e) => {
-            e.stopPropagation(); // Evita que el clic se cuente doble al tocar el botón y la tarjeta a la vez
-            onAdd(dish);
-          }}
-        >
-          <Plus size={20} strokeWidth={3} />
-        </button>
+        {/* Información del plato */}
+        <div className="flex-1 min-w-0 pr-1">
+          <h3 className="text-sm font-black text-white tracking-tight font-serif line-clamp-2 leading-snug mb-1">
+            {dish.name}
+          </h3>
+          
+          {dish.description ? (
+            <p className="text-[11px] text-zinc-400 leading-snug line-clamp-2 mb-3">
+              {dish.description}
+            </p>
+          ) : (
+            <div className="h-2" />
+          )}
+
+          <span className="text-sm font-black text-white font-mono tracking-wide">
+            {formattedPrice}
+          </span>
+        </div>
+
+        {/* Miniatura / Placeholder + Botón interactivo (+) */}
+        <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800/80 flex items-center justify-center shrink-0">
+          {dish.imageUrl ? (
+            <Image
+              src={dish.imageUrl}
+              alt={dish.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              unoptimized
+            />
+          ) : (
+            <span className="text-[10px] text-zinc-600 font-medium">
+              Sin imagen
+            </span>
+          )}
+
+          {/* Botón flotante (+) en la esquina inferior */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAdd(dish);
+            }}
+            aria-label={`Agregar ${dish.name}`}
+            className="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shadow-lg active:scale-90 transition-transform hover:bg-zinc-100"
+          >
+            <Plus size={15} strokeWidth={2.8} />
+          </button>
+        </div>
+
       </div>
-    </div>
+    </article>
   );
 }
