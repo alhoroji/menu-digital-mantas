@@ -28,32 +28,37 @@ export default function TenantMenuPage({ params }: { params: { restaurante_slug:
       className="min-h-screen font-sans w-full sm:max-w-md mx-auto overflow-x-hidden text-zinc-100 selection:bg-zinc-800 relative flex flex-col"
       style={{ backgroundColor: mockRestaurant.theme.background }}
     >
-      {/* 1. HEADER CON LOGO TEXTIL */}
-      <header className="flex justify-between items-center px-5 pt-5 pb-3 w-full shrink-0">
-        <div>
-          <h1 
-            className="text-4xl font-black tracking-tight drop-shadow-md select-none"
-            style={{
-              backgroundImage: `url(${BUCKET_URL}/tiramaestra.png)`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
+      {/* 1. HEADER CON LOGO IN BIANCO PURO */}
+      <header className="flex justify-between items-center px-5 pt-6 pb-3 w-full shrink-0">
+        <div className="flex items-center gap-2">
+          {/* Dettaglio ornamentale andino sinistro */}
+          <span className="text-amber-500 text-sm font-black drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] select-none">
+            ❖
+          </span>
+
+          {/* Logo bianco ad alto contrasto */}
+          <h1 className="text-4xl font-black text-white tracking-tight font-serif drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] select-none">
             {mockRestaurant.name}
           </h1>
+
+          {/* Dettaglio ornamentale andino destro */}
+          <span className="text-amber-500 text-sm font-black drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] select-none">
+            ❖
+          </span>
         </div>
-        <button className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800/80 flex items-center justify-center shadow-lg active:scale-90 transition-transform">
+
+        {/* Pulsante notifiche */}
+        <button className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800/80 flex items-center justify-center shadow-lg active:scale-90 transition-transform relative">
           <BellRing size={18} className="text-zinc-400" />
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-red-500 border border-zinc-900 animate-pulse" />
         </button>
       </header>
 
-      {/* 2. CINTA TEXTIL SEPARADORA */}
+      {/* 2. FASCIA TEXTILE SUPERIORE (ora cintaexplorarcarta.png) */}
       <div className="relative w-full h-3.5 shrink-0 mb-4 overflow-hidden shadow-sm">
         <Image 
-          src={`${BUCKET_URL}/tiramaestra.png`} 
-          alt="Borde Textil Mantas" 
+          src={`${BUCKET_URL}/cintaexplorarcarta.png`} 
+          alt="Bordo Mantas" 
           fill 
           className="object-cover"
           unoptimized 
@@ -66,7 +71,7 @@ export default function TenantMenuPage({ params }: { params: { restaurante_slug:
         <SpotlightBanner status={status} primaryColor={mockRestaurant.theme.primary} />
       </div>
       
-      {/* 4. GRILLA BENTO COMPLETA */}
+      {/* 4. GRIGLIA BENTO DELLE CATEGORIE */}
       <BentoCategoryGrid />
       <CartFloatingButton />
       
