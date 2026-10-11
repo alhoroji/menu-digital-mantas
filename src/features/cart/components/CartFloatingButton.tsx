@@ -1,34 +1,48 @@
 // src/features/cart/components/CartFloatingButton.tsx
 'use client';
-import { ShoppingBag } from 'lucide-react';
-import { useCartStore } from '../store/useCartStore';
-import { useRouter } from 'next/navigation';
 
+import React, { useState } from 'react';
+import { ShoppingBag } from 'lucide-react';
+import { useCartStore } from '@/features/cart/store/useCartStore';
+import { CartDrawer } from '@/features/cart/components/CartDrawer';
 
 export function CartFloatingButton() {
-  const router = useRouter();
-  const total = useCartStore((state) => state.getTotalAmount());
-  const itemsCount = useCartStore((state) => state.getTotalItems());
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const items = useCartStore((state) => state.items);
+  const getTotalAmount = useCartStore((state) => state.getTotalAmount);
+  const getTotalItems = useCartStore((state) => state.getTotalItems);
 
-  // Se non ci sono articoli, nascondiamo il pulsante per pulire l'interfaccia
-  if (itemsCount === 0) return null;
+  const totalCount = getTotalItems();
+  const totalPrice = getTotalAmount();
+
+  if (totalCount === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 right-6 sm:max-w-sm sm:mx-auto z-50 animate-in slide-in-from-bottom-10 fade-in duration-300">
-      <button className="w-full h-16 rounded-[2rem] bg-zinc-100 flex items-center justify-between px-2 pr-6 shadow-[0_20px_40px_rgba(0,0,0,0.4)] active:scale-95 transition-transform">
-        <div className="flex items-center gap-3">
-          <div className="relative w-12 h-12 rounded-full bg-black flex items-center justify-center">
-            <ShoppingBag size={18} className="text-white" />
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-[10px] font-bold flex items-center justify-center text-white border-2 border-zinc-100 shadow-sm">
-              {itemsCount}
-            </span>
-          </div>
-          <span className="font-semibold text-black tracking-tight">Vedi Ordine</span>
+    <>
+      <aside aria-label="Resumen del carrito" className="fixed bottom-6 left-0 right-0 z-40 px-5 pointer-events-none">
+        <div className="max-w-md mx-auto pointer-events-auto">
+          <button
+            onClick={() => setIsDrawerOpen(true)}
+            className="w-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-black py-3.5 px-5 rounded-full shadow-[0_0_25px_rgba(245,158,11,0.45)] flex items-center justify-between active:scale-[0.98] transition-all"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-full bg-black/20 flex items-center justify-center">
+                <ShoppingBag size={15} strokeWidth={2.5} />
+              </div>
+              <span className="text-xs uppercase tracking-wider font-extrabold">
+                {totalCount} {totalCount === 1 ? 'plato' : 'platos'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs uppercase tracking-wider">Ver pedido</span>
+              <span className="text-sm font-mono font-black">• €{totalPrice.toFixed(2)}</span>
+            </div>
+          </button>
         </div>
-        <span className="font-bold text-black text-lg">
-          € {total.toFixed(2)}
-        </span>
-      </button>
-    </div>
+      </aside>
+
+      <CartDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
+    </>
   );
 }
