@@ -6,11 +6,15 @@ import Image from 'next/image';
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
 
+// Neón Eléctrico Fuego Vivo: Compacto, definido y ultra-intenso
+const NEON_CARD_VIBRANT = '0 0 5px #ff1744, 0 0 10px #ff3d00, 0 0 18px rgba(255, 61, 0, 0.6)';
+const NEON_CARD_ACCENT  = '0 0 4px #ff3d00, 0 0 9px #ff6d00, 0 0 16px rgba(255, 109, 0, 0.5)';
+
 export function BentoCategoryGrid() {
   return (
     <section className="px-5 w-full mx-auto pb-6">
       
-      {/* CINTA DECORATIVA EXPLORAR CARTA */}
+      {/* Cinta Explorar Carta */}
       <div className="flex items-center gap-2.5 mb-2.5">
         <h3 className="text-[11px] font-black text-zinc-400 uppercase tracking-widest shrink-0">
           Explorar Carta
@@ -26,12 +30,13 @@ export function BentoCategoryGrid() {
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-3">
          
-         {/* 1. PLATOS MARINOS (Borde fino de 2.5px - Comida al 100%) */}
+         {/* 1. PLATOS MARINOS (Neón Eléctrico Compacto) */}
          <Link 
            href="/mantas/categoria/cat_marinos" 
-           className="col-span-2 relative p-[2.5px] rounded-[1.6rem] overflow-hidden group active:scale-[0.98] transition-all text-left shadow-[0_0_18px_rgba(239,68,68,0.4)] border border-red-500/20"
+           className="col-span-2 relative p-[2.5px] rounded-[1.6rem] overflow-hidden group active:scale-[0.98] transition-all text-left"
+           style={{ boxShadow: NEON_CARD_VIBRANT }}
          >
             <Image 
               src={`${BUCKET_URL}/bannerplatosmarino.png`} 
@@ -61,10 +66,11 @@ export function BentoCategoryGrid() {
             </div>
          </Link>
 
-         {/* 2. PLATOS CRIOLLOS (Borde fino de 2.5px) */}
+         {/* 2. PLATOS CRIOLLOS (Neón Eléctrico) */}
          <Link 
            href="/mantas/categoria/cat_criollos" 
-           className="relative p-[2.5px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_15px_rgba(239,68,68,0.35)] border border-red-500/20"
+           className="relative p-[2.5px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group"
+           style={{ boxShadow: NEON_CARD_VIBRANT }}
          >
             <Image 
               src={`${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`} 
@@ -90,10 +96,11 @@ export function BentoCategoryGrid() {
             </div>
          </Link>
 
-         {/* 3. POLLO A LA BRASA (Borde fino de 2.5px) */}
+         {/* 3. POLLO A LA BRASA (Neón Eléctrico) */}
          <Link 
            href="/mantas/categoria/cat_pollo" 
-           className="relative p-[2.5px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_15px_rgba(239,68,68,0.35)] border border-red-500/20"
+           className="relative p-[2.5px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group"
+           style={{ boxShadow: NEON_CARD_VIBRANT }}
          >
             <Image 
               src={`${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`} 
@@ -119,10 +126,11 @@ export function BentoCategoryGrid() {
             </div>
          </Link>
 
-         {/* 4. ENTRADAS (Fondo textil visible + borde sutil) */}
+         {/* 4. ENTRADAS (Neón Cálido Definido) */}
          <Link 
            href="/mantas/categoria/cat_entradas" 
-           className="relative h-[95px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_14px_rgba(239,68,68,0.25)] border border-red-500/20"
+           className="relative h-[95px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group"
+           style={{ boxShadow: NEON_CARD_ACCENT }}
          >
             <Image 
               src={`${BUCKET_URL}/bannerentrada-bebidas.png`} 
@@ -139,10 +147,11 @@ export function BentoCategoryGrid() {
             </div>
          </Link>
 
-         {/* 5. BEBIDAS & TRAGOS (Fondo textil visible + borde sutil) */}
+         {/* 5. BEBIDAS & TRAGOS (Neón Cálido Definido) */}
          <Link 
            href="/mantas/categoria/cat_bebidas" 
-           className="relative h-[95px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_14px_rgba(239,68,68,0.25)] border border-red-500/20"
+           className="relative h-[95px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group"
+           style={{ boxShadow: NEON_CARD_ACCENT }}
          >
             <Image 
               src={`${BUCKET_URL}/bannerentrada-bebidas.png`} 
@@ -153,7 +162,7 @@ export function BentoCategoryGrid() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent z-10" />
             <div className="absolute bottom-2.5 left-3 z-20">
-              <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+              <h4 className="text-sm font-black text-white leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
                 Bebidas &<br/>Tragos
               </h4>
             </div>
