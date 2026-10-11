@@ -8,8 +8,8 @@ import { useCartStore } from '@/features/cart/store/useCartStore';
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
 
-// Número de WhatsApp oficial de Mantas (cambiar por el número real)
-const RESTAURANT_PHONE = "393000000000"; 
+// Número de WhatsApp oficial de Mantas Milano
+const RESTAURANT_PHONE = "393513290178";
 
 interface CartDrawerProps {
   isOpen: boolean;
