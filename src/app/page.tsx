@@ -28,7 +28,7 @@ function BentoCategoryGrid() {
         <h3 className="text-xs font-black text-zinc-400 uppercase tracking-widest shrink-0">
           Explorar Carta
         </h3>
-        <div className="relative flex-1 h-3 rounded-full overflow-hidden shadow-sm">
+        <div className="relative flex-1 h-4 rounded-full overflow-hidden shadow-sm">
           <Image 
             src={`${BUCKET_URL}/cintaexplorarcarta.png`} 
             alt="Cinta Textil" 
@@ -44,7 +44,7 @@ function BentoCategoryGrid() {
          {/* PLATOS MARINOS */}
          <Link 
            href="/mantas/categoria/cat_marinos" 
-           className="col-span-2 relative p-[3px] rounded-[1.8rem] overflow-hidden group active:scale-[0.98] transition-all text-left shadow-[0_0_20px_rgba(239,68,68,0.4)]"
+           className="col-span-2 relative p-[6px] rounded-[1.8rem] overflow-hidden group active:scale-[0.98] transition-all text-left shadow-[0_0_22px_rgba(239,68,68,0.4)]"
          >
             {/* Marco Textil de Fondo */}
             <Image 
@@ -56,7 +56,7 @@ function BentoCategoryGrid() {
             />
 
             {/* Contenedor Interior con Foto */}
-            <div className="relative w-full h-full rounded-[1.65rem] overflow-hidden bg-zinc-950">
+            <div className="relative w-full h-full rounded-[1.45rem] overflow-hidden bg-zinc-950">
               <Image 
                 src={`${BUCKET_URL}/platosmarinos.jpg`} 
                 alt="Platos Marinos" 
@@ -64,8 +64,8 @@ function BentoCategoryGrid() {
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 unoptimized
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent z-10" />
-              <div className="absolute bottom-4 left-4 z-20">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10" />
+              <div className="absolute bottom-3.5 left-4 z-20">
                 <h4 className="text-xl font-black text-white mb-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
                   Platos Marinos
                 </h4>
@@ -79,7 +79,7 @@ function BentoCategoryGrid() {
          {/* PLATOS CRIOLLOS */}
          <Link 
            href="/mantas/categoria/cat_criollos" 
-           className="relative p-[3px] rounded-[1.65rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_16px_rgba(239,68,68,0.35)]"
+           className="relative p-[5px] rounded-[1.65rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_18px_rgba(239,68,68,0.35)]"
          >
             <Image 
               src={`${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`} 
@@ -88,7 +88,7 @@ function BentoCategoryGrid() {
               className="object-cover"
               unoptimized
             />
-            <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden bg-zinc-950">
+            <div className="relative w-full h-full rounded-[1.35rem] overflow-hidden bg-zinc-950">
               <Image 
                 src={`${BUCKET_URL}/platos_criollos.jpg`} 
                 alt="Platos Criollos" 
@@ -97,7 +97,7 @@ function BentoCategoryGrid() {
                 unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-10" />
-              <div className="absolute bottom-4 left-4 z-20">
+              <div className="absolute bottom-3 left-3.5 z-20">
                 <h4 className="text-base font-black text-white leading-tight mb-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
                   Platos<br/>Criollos
                 </h4>
@@ -108,7 +108,7 @@ function BentoCategoryGrid() {
          {/* POLLO A LA BRASA */}
          <Link 
            href="/mantas/categoria/cat_pollo" 
-           className="relative p-[3px] rounded-[1.65rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_16px_rgba(239,68,68,0.35)]"
+           className="relative p-[5px] rounded-[1.65rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_18px_rgba(239,68,68,0.35)]"
          >
             <Image 
               src={`${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`} 
@@ -117,7 +117,7 @@ function BentoCategoryGrid() {
               className="object-cover"
               unoptimized
             />
-            <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden bg-zinc-950">
+            <div className="relative w-full h-full rounded-[1.35rem] overflow-hidden bg-zinc-950">
               <Image 
                 src={`${BUCKET_URL}/pollo_ala_brasa.jpg`} 
                 alt="Pollo a la Brasa" 
@@ -126,7 +126,7 @@ function BentoCategoryGrid() {
                 unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-10" />
-              <div className="absolute bottom-4 left-4 z-20">
+              <div className="absolute bottom-3 left-3.5 z-20">
                 <h4 className="text-base font-black text-white leading-tight mb-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
                   Pollo a<br/>la Brasa
                 </h4>
@@ -137,17 +137,17 @@ function BentoCategoryGrid() {
          {/* ENTRADAS */}
          <Link 
            href="/mantas/categoria/cat_entradas" 
-           className="relative rounded-[1.65rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_12px_rgba(0,0,0,0.6)] border border-zinc-800/80"
+           className="relative rounded-[1.65rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_15px_rgba(0,0,0,0.7)] border border-zinc-800"
          >
             <Image 
               src={`${BUCKET_URL}/bannerentrada-bebidas.png`} 
               alt="Entradas Textil" 
               fill 
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
               unoptimized
             />
-            <div className="absolute inset-0 bg-black/40 z-10" />
-            <div className="absolute bottom-4 left-4 z-20">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+            <div className="absolute bottom-3.5 left-4 z-20">
               <h4 className="text-base font-black text-white leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
                 Entradas
               </h4>
@@ -157,17 +157,17 @@ function BentoCategoryGrid() {
          {/* BEBIDAS */}
          <Link 
            href="/mantas/categoria/cat_bebidas" 
-           className="relative rounded-[1.65rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_12px_rgba(0,0,0,0.6)] border border-zinc-800/80"
+           className="relative rounded-[1.65rem] overflow-hidden active:scale-95 transition-all text-left group shadow-[0_0_15px_rgba(0,0,0,0.7)] border border-zinc-800"
          >
             <Image 
               src={`${BUCKET_URL}/bannerentrada-bebidas.png`} 
               alt="Bebidas & Tragos Textil" 
               fill 
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
               unoptimized
             />
-            <div className="absolute inset-0 bg-black/40 z-10" />
-            <div className="absolute bottom-4 left-4 z-20">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+            <div className="absolute bottom-3.5 left-4 z-20">
               <h4 className="text-base font-black text-white leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
                 Bebidas &<br/>Tragos
               </h4>
@@ -188,7 +188,7 @@ export default function TenantMenuPage({ params }: { params: { restaurante_slug:
       style={{ backgroundColor: mockRestaurant.theme.background }}
     >
       {/* Tira Maestra Superior */}
-      <div className="relative w-full h-3.5 shrink-0 overflow-hidden shadow-sm">
+      <div className="relative w-full h-4 shrink-0 overflow-hidden shadow-sm">
         <Image 
           src={`${BUCKET_URL}/tiramaestra.png`} 
           alt="Borde Superior Mantas" 
@@ -199,9 +199,19 @@ export default function TenantMenuPage({ params }: { params: { restaurante_slug:
         />
       </div>
 
-      <header className="flex justify-between items-center px-5 pt-4 pb-3.5 w-full shrink-0">
+      <header className="flex justify-between items-center px-5 pt-4 pb-3 w-full shrink-0">
         <div>
-          <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-amber-400 via-rose-500 to-red-500 bg-clip-text text-transparent drop-shadow-md">
+          {/* Logo Mantas con textura textil auténtica */}
+          <h1 
+            className="text-4xl font-black tracking-tight drop-shadow-md select-none"
+            style={{
+              backgroundImage: `url(${BUCKET_URL}/tiramaestra.png)`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             {mockRestaurant.name}
           </h1>
         </div>
