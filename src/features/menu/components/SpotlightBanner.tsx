@@ -18,7 +18,7 @@ export function SpotlightBanner({ status, primaryColor }: SpotlightBannerProps) 
       className="relative p-[1.5px] rounded-[1.8rem] overflow-hidden group shadow-lg"
       style={{ boxShadow: '0 0 12px rgba(239, 68, 68, 0.45)' }}
     >
-      {/* 1. Cornice tessile andina */}
+      {/* 1. Marco Textil Andino */}
       <div className="absolute inset-0 pointer-events-none rounded-[1.8rem] overflow-hidden">
         <Image
           src={`${BUCKET_URL}/tiramaestra.png`}
@@ -29,10 +29,10 @@ export function SpotlightBanner({ status, primaryColor }: SpotlightBannerProps) 
         />
       </div>
 
-      {/* 2. Contenitore Immagine (Luce naturale chiara e senza ombre pesanti) */}
-      <div className="relative bg-[#0d0d12] rounded-[1.7rem] overflow-hidden h-[15rem] flex flex-col justify-end p-5">
+      {/* 2. Contenedor de la Imagen */}
+      <div className="relative bg-[#0d0d12] rounded-[1.7rem] overflow-hidden h-[14rem] flex flex-col justify-end p-5">
         <Image
-          src={`${BUCKET_URL}/cevichemixto.jpg?v=2`}
+          src={`${BUCKET_URL}/cevichemixto.jpg?v=3`}
           alt="Ceviche Misto Mantas"
           fill
           className="object-cover pointer-events-none group-hover:scale-105 transition-transform duration-700"
@@ -40,7 +40,7 @@ export function SpotlightBanner({ status, primaryColor }: SpotlightBannerProps) 
           priority
         />
 
-        {/* 3. Testi con ombreggiatura individuale */}
+        {/* 3. Textos con contraste limpio */}
         <div className="relative z-10 flex flex-col items-start select-none">
           <div className="flex items-center gap-1 bg-[#0a0a0f]/90 border border-amber-500/30 backdrop-blur-md rounded-full px-2.5 py-1 mb-2">
             <Sparkles size={11} className="text-amber-500 fill-amber-500" />
