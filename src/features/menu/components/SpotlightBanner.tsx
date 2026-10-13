@@ -1,76 +1,63 @@
 // src/features/menu/components/SpotlightBanner.tsx
 'use client';
 
+import React from 'react';
 import Image from 'next/image';
 import { Sparkles } from 'lucide-react';
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
 
-// Fórmula Neón Eléctrico: Núcleo ultra-saturado + halo compacto
-const NEON_CEVICHE = '0 0 5px #ff1744, 0 0 11px #ff3d00, 0 0 20px rgba(255, 61, 0, 0.65)';
-
 interface SpotlightBannerProps {
-  status?: any; 
+  status?: any;
   primaryColor?: string;
 }
 
 export function SpotlightBanner({ status, primaryColor }: SpotlightBannerProps) {
   return (
-    <div 
-      className="relative p-[2.5px] rounded-[1.7rem] overflow-hidden group cursor-pointer active:scale-[0.99] transition-all"
-      style={{ boxShadow: NEON_CEVICHE }}
+    <article 
+      className="relative p-[1.5px] rounded-[1.8rem] overflow-hidden group shadow-lg"
+      style={{ boxShadow: '0 0 12px rgba(239, 68, 68, 0.45)' }}
     >
-      
-      {/* Marco Textil Andino */}
-      <Image 
-        src={`${BUCKET_URL}/bannerceviche.png`}
-        alt="Textil Andino Marco"
-        fill
-        className="object-cover"
-        unoptimized
-      />
-
-      {/* Contenedor Interior */}
-      <div className="relative w-full h-[185px] rounded-[1.55rem] overflow-hidden bg-zinc-950">
-        
-        <Image 
-          src={`${BUCKET_URL}/cevichemixto.jpg`}
-          alt="Ceviche Mixto - Recomendación del Chef"
+      {/* 1. Cornice tessile andina */}
+      <div className="absolute inset-0 pointer-events-none rounded-[1.8rem] overflow-hidden">
+        <Image
+          src={`${BUCKET_URL}/tiramaestra.png`}
+          alt="Cornice Tessile"
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-          priority
+          className="object-cover"
           unoptimized
         />
+      </div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10" />
+      {/* 2. Contenitore Immagine (Luce naturale chiara e senza ombre pesanti) */}
+      <div className="relative bg-[#0d0d12] rounded-[1.7rem] overflow-hidden h-[15rem] flex flex-col justify-end p-5">
+        <Image
+          src={`${BUCKET_URL}/cevichemixto.png?v=2`}
+          alt="Ceviche Misto Mantas"
+          fill
+          className="object-cover pointer-events-none group-hover:scale-105 transition-transform duration-700"
+          unoptimized
+          priority
+        />
 
-        <div className="absolute bottom-3 left-3.5 right-3.5 flex flex-col items-start z-20">
-          
-          <div className="p-[1px] rounded-full overflow-hidden relative mb-1.5 shadow-md">
-            <Image 
-              src={`${BUCKET_URL}/cintaexplorarcarta.png`}
-              alt="Borde Textil"
-              fill
-              className="object-cover"
-              unoptimized
-            />
-            <div className="relative px-2.5 py-0.5 rounded-full bg-black/85 backdrop-blur-md flex items-center gap-1">
-              <Sparkles size={10} className="text-amber-400 animate-pulse" />
-              <span className="text-[9px] font-extrabold text-white tracking-widest uppercase">
-                Recomendación del Chef
-              </span>
-            </div>
+        {/* 3. Testi con ombreggiatura individuale */}
+        <div className="relative z-10 flex flex-col items-start select-none">
+          <div className="flex items-center gap-1 bg-[#0a0a0f]/90 border border-amber-500/30 backdrop-blur-md rounded-full px-2.5 py-1 mb-2">
+            <Sparkles size={11} className="text-amber-500 fill-amber-500" />
+            <span className="text-[9px] font-black uppercase tracking-wider text-amber-500">
+              RECOMENDACIÓN DEL CHEF
+            </span>
           </div>
-          
-          <h2 className="text-2xl font-black text-white tracking-tight mb-0.5 font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+
+          <h3 className="text-2xl font-black text-white font-serif tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
             Ceviche Misto
-          </h2>
-          <p className="text-[11px] text-zinc-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+          </h3>
+
+          <p className="text-xs text-zinc-100 mt-1 font-medium leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
             Pesca del día con leche de tigre.
           </p>
         </div>
-
       </div>
-    </div>
+    </article>
   );
 }

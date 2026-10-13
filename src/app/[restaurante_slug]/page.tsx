@@ -8,7 +8,6 @@ import { useMenuStatus } from '@/features/menu/hooks/useMenuStatus';
 import { SpotlightBanner } from '@/features/menu/components/SpotlightBanner';
 import { BentoCategoryGrid } from '@/features/menu/components/BentoCategoryGrid';
 import { BottomNavigationDock } from '@/features/navigation/components/BottomNavigationDock';
-
 const mockRestaurant = {
   name: "Mantas",
   theme: { background: "#060608", primary: "#E4B363" },
