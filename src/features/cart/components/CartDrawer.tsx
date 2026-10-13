@@ -1,9 +1,12 @@
 // src/features/cart/components/CartDrawer.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { X, Plus, Minus, Trash2, MessageCircle, MapPin, User, Clock, Bell, FileText, ChevronRight } from 'lucide-react';
+import { 
+  X, Plus, Minus, Trash2, MessageCircle, MapPin, 
+  User, Clock, Bell, FileText, ChevronDown, ChevronUp 
+} from 'lucide-react';
 import { useCartStore } from '@/features/cart/store/useCartStore';
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
@@ -23,6 +26,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const [serviceType, setServiceType] = useState<ServiceMode>('delivery');
 
+  // Control de foco de teclado y colapso de platos
+  const [isTyping, setIsTyping] = useState(false);
+  const [isDishesCollapsed, setIsDishesCollapsed] = useState(false);
+
   // Campos de formulario
   const [customerName, setCustomerName] = useState('');
   const [tableNumber, setTableNumber] = useState('');
@@ -32,9 +39,39 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [requestedTime, setRequestedTime] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
 
+  // Detección de cierre de teclado en Android / iOS vía visualViewport
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.visualViewport) return;
+
+    const handleResize = () => {
+      if (window.visualViewport && window.visualViewport.height >= window.innerHeight * 0.78) {
+        setIsTyping(false);
+      }
+    };
+
+    window.visualViewport.addEventListener('resize', handleResize);
+    return () => {
+      window.visualViewport?.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   if (!isOpen) return null;
 
   const totalAmount = getTotalAmount();
+
+  // Enfocar y auto-centrar el campo en pantalla al tocarlo
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 220);
+  };
+
+  const handleInputBlur = () => {
+    setTimeout(() => {
+      setIsTyping(false);
+    }, 150);
+  };
 
   const handleCheckoutWhatsApp = () => {
     if (items.length === 0) return;
@@ -109,9 +146,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200 overscroll-contain"
       onClick={onClose}
     >
-      {/* Contenedor del Drawer - Limitado a 88dvh y 100% responsivo */}
+      {/* Contenedor del Drawer */}
       <div 
-        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col max-h-[88dvh] touch-pan-y"
+        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col h-[90dvh] max-h-[90dvh] touch-pan-y"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -158,9 +195,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         </div>
 
         {/* 3. Área de Scroll Interno */}
-        <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 overscroll-contain">
+        <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 overscroll-contain scroll-pb-24">
           
-          {/* LISTA DE PLATOS */}
+          {/* LISTA DE PLATOS (CON OPCIÓN DE COLAPSAR) */}
           {items.length === 0 ? (
             <div className="py-12 text-center text-zinc-500">
               <span className="text-4xl block mb-2">🛒</span>
@@ -169,54 +206,72 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </div>
           ) : (
             <div className="space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block px-1">
-                Riepilogo Piatti
-              </span>
-              {items.map((item) => {
-                const price = item.dish.price.table || item.dish.price.standard;
-                return (
-                  <div
-                    key={item.dish.id}
-                    className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-3 flex items-center justify-between gap-3"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-white truncate font-serif">
-                        {item.dish.name}
-                      </h3>
-                      <span className="text-xs font-mono font-semibold text-amber-400">
-                        €{(price * item.quantity).toFixed(2)}
-                      </span>
-                    </div>
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
+                  Riepilogo Piatti ({items.length})
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsDishesCollapsed(!isDishesCollapsed)}
+                  className="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                >
+                  {isDishesCollapsed ? (
+                    <><span>Mostra dettagli</span> <ChevronDown size={13} /></>
+                  ) : (
+                    <><span>Comprimi</span> <ChevronUp size={13} /></>
+                  )}
+                </button>
+              </div>
 
-                    {/* Controles de Cantidad */}
-                    <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-full px-2 py-1 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => updateQuantity(item.dish.id, item.quantity - 1)}
-                        className="w-6 h-6 rounded-full flex items-center justify-center text-zinc-400 hover:text-white active:scale-90"
+              {!isDishesCollapsed && (
+                <div className="space-y-2 pt-1 animate-in fade-in duration-200">
+                  {items.map((item) => {
+                    const price = item.dish.price.table || item.dish.price.standard;
+                    return (
+                      <div
+                        key={item.dish.id}
+                        className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-3 flex items-center justify-between gap-3"
                       >
-                        {item.quantity === 1 ? <Trash2 size={12} className="text-red-400" /> : <Minus size={12} />}
-                      </button>
-                      <span className="text-xs font-black text-white font-mono w-4 text-center">
-                        {item.quantity}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => updateQuantity(item.dish.id, item.quantity + 1)}
-                        className="w-6 h-6 rounded-full flex items-center justify-center text-zinc-400 hover:text-white active:scale-90"
-                      >
-                        <Plus size={12} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-bold text-white truncate font-serif">
+                            {item.dish.name}
+                          </h3>
+                          <span className="text-xs font-mono font-semibold text-amber-400">
+                            €{(price * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
+
+                        {/* Controles de Cantidad */}
+                        <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-full px-2 py-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.dish.id, item.quantity - 1)}
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-zinc-400 hover:text-white active:scale-90"
+                          >
+                            {item.quantity === 1 ? <Trash2 size={12} className="text-red-400" /> : <Minus size={12} />}
+                          </button>
+                          <span className="text-xs font-black text-white font-mono w-4 text-center">
+                            {item.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.dish.id, item.quantity + 1)}
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-zinc-400 hover:text-white active:scale-90"
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
-          {/* FORMULARIO DE ENTREGA (OPTIMIZADO PARA MÓVILES - SIN ZOOM) */}
+          {/* FORMULARIO DE ENTREGA */}
           {items.length > 0 && (
-            <div className="pt-3 border-t border-zinc-900 space-y-3.5">
+            <div className="pt-2 border-t border-zinc-900 space-y-3.5">
               
               {/* Selector de Modalidad */}
               <div>
@@ -266,7 +321,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <div>
                     <label 
                       htmlFor="delivery-name" 
-                      className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                      className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
                       <User size={13} className="text-amber-400" />
                       Nome e Cognome *
@@ -277,6 +332,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       autoComplete="name"
                       placeholder="es. Mario Rossi"
                       value={customerName}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                       onChange={(e) => setCustomerName(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                     />
@@ -286,7 +343,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <div className="col-span-2">
                       <label 
                         htmlFor="delivery-address" 
-                        className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                        className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                       >
                         <MapPin size={13} className="text-amber-400" />
                         Via / Indirizzo *
@@ -297,6 +354,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         autoComplete="street-address"
                         placeholder="es. Via Grassi"
                         value={address}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                         onChange={(e) => setAddress(e.target.value)}
                         className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                       />
@@ -313,6 +372,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         type="text"
                         placeholder="es. 5"
                         value={civicNumber}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                         onChange={(e) => setCivicNumber(e.target.value)}
                         className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                       />
@@ -323,7 +384,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <div>
                       <label 
                         htmlFor="delivery-intercom" 
-                        className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                        className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                       >
                         <Bell size={13} className="text-zinc-400" />
                         Citofono
@@ -333,6 +394,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         type="text"
                         placeholder="es. Rossi int. 4"
                         value={intercom}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                         onChange={(e) => setIntercom(e.target.value)}
                         className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                       />
@@ -340,7 +403,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <div>
                       <label 
                         htmlFor="delivery-time" 
-                        className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                        className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                       >
                         <Clock size={13} className="text-zinc-400" />
                         Orario desiderato
@@ -350,6 +413,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         type="text"
                         placeholder="es. 20:30"
                         value={requestedTime}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                         onChange={(e) => setRequestedTime(e.target.value)}
                         className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                       />
@@ -359,7 +424,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <div>
                     <label 
                       htmlFor="delivery-notes" 
-                      className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                      className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
                       <FileText size={13} className="text-zinc-400" />
                       Note consegna (Scala, Piano...)
@@ -369,6 +434,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       type="text"
                       placeholder="es. Scala B, 2° piano..."
                       value={deliveryNotes}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                       onChange={(e) => setDeliveryNotes(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
@@ -382,7 +449,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <div>
                     <label 
                       htmlFor="asporto-name" 
-                      className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                      className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
                       <User size={13} className="text-amber-400" />
                       Nome per il ritiro *
@@ -392,6 +459,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       type="text"
                       placeholder="es. Mario"
                       value={customerName}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                       onChange={(e) => setCustomerName(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
@@ -399,7 +468,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <div>
                     <label 
                       htmlFor="asporto-time" 
-                      className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                      className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
                       <Clock size={13} className="text-zinc-400" />
                       Orario di ritiro
@@ -409,6 +478,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       type="text"
                       placeholder="es. tra 25 minuti / 19:45"
                       value={requestedTime}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                       onChange={(e) => setRequestedTime(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
@@ -431,6 +502,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       type="text"
                       placeholder="es. Tavolo 5"
                       value={tableNumber}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                       onChange={(e) => setTableNumber(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
@@ -443,9 +516,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
         </div>
 
-        {/* 4. Footer Fijo con Total y CTA de WhatsApp */}
+        {/* 4. Pie con Total y Botón de WhatsApp (Se oculta en móvil al escribir para no tapar los campos) */}
         {items.length > 0 && (
-          <div className="p-4 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-3 shrink-0">
+          <div className={`p-4 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-900 flex-col gap-3 shrink-0 ${isTyping ? 'hidden sm:flex' : 'flex'} animate-in fade-in duration-150`}>
             <div className="flex justify-between items-center px-1">
               <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Totale Ordine</span>
               <span className="text-xl font-black text-amber-400 font-mono">
