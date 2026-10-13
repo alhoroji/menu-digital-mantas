@@ -51,7 +51,7 @@ export function BentoCategoryGrid() {
 
             <div className="relative w-full h-[112px] rounded-[1.5rem] overflow-hidden bg-zinc-950">
               <Image 
-                src={`${BUCKET_URL}/platosmarinos.jpg`} 
+                src={`${BUCKET_URL}/platosmarinos.jpg?v=2`}
                 alt="Platos Marinos" 
                 fill 
                 className="object-cover transition-transform duration-500 group-hover:scale-105"

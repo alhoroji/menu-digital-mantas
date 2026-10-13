@@ -50,11 +50,11 @@ export function SpotlightBanner({ status, primaryColor }: SpotlightBannerProps) 
           </div>
 
           <h3 className="text-2xl font-black text-white font-serif tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
-            Ceviche Misto
+            Ceviche Mixto
           </h3>
 
           <p className="text-xs text-zinc-100 mt-1 font-medium leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
-            Pesca del día con leche de tigre.
+            Una expericia Inolvidable.
           </p>
         </div>
       </div>
