@@ -32,7 +32,7 @@ export function SpotlightBanner({ status, primaryColor }: SpotlightBannerProps) 
       {/* 2. Contenitore Immagine (Luce naturale chiara e senza ombre pesanti) */}
       <div className="relative bg-[#0d0d12] rounded-[1.7rem] overflow-hidden h-[15rem] flex flex-col justify-end p-5">
         <Image
-          src={`${BUCKET_URL}/cevichemixto.png?v=2`}
+          src={`${BUCKET_URL}/cevichemixto.jpg?v=2`}
           alt="Ceviche Misto Mantas"
           fill
           className="object-cover pointer-events-none group-hover:scale-105 transition-transform duration-700"
