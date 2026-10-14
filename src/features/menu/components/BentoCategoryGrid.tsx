@@ -83,13 +83,13 @@ export function BentoCategoryGrid() {
               unoptimized
             />
             <div className="relative w-full h-[106px] rounded-[1.4rem] overflow-hidden bg-zinc-950">
-              <Image 
-                src={`${BUCKET_URL}/platos_criollos.jpg`} 
-                alt="Platos Criollos" 
-                fill 
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                unoptimized
-              />
+              <Image
+  src={`${BUCKET_URL}/platoscriollos.jpg?v=2`}
+  alt="Platos Criollos"
+  fill
+  className="object-cover group-hover:scale-105 transition-transform duration-500"
+  unoptimized
+/>
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent z-10" />
               <div className="absolute bottom-2.5 left-3 z-20">
                 <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
