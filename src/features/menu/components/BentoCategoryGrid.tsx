@@ -12,6 +12,7 @@ const NEON_CRIOLLOS  = '0 0 3px #ff1744, 0 0 9px rgba(255, 23, 68, 0.55)';
 const NEON_POLLO     = '0 0 3px #ffab00, 0 0 9px rgba(255, 171, 0, 0.55)';
 const NEON_ENTRADAS  = '0 0 3px #10b981, 0 0 8px rgba(16, 185, 129, 0.5)';
 const NEON_BEBIDAS   = '0 0 3px #e040fb, 0 0 9px rgba(224, 64, 251, 0.55)';
+const NEON_DESAYUNOS = '0 0 3px #f59e0b, 0 0 9px rgba(245, 158, 11, 0.55)';
 
 export function BentoCategoryGrid() {
   return (
@@ -27,7 +28,7 @@ export function BentoCategoryGrid() {
             src={`${BUCKET_URL}/tiramaestra.png`} 
             alt="Cinta Explorar Carta" 
             fill 
-            className="object-cover"
+            className="object-cover" 
             unoptimized 
           />
         </div>
@@ -41,32 +42,32 @@ export function BentoCategoryGrid() {
            className="col-span-2 relative p-[1.5px] rounded-[1.6rem] overflow-hidden group active:scale-[0.98] transition-all text-left"
            style={{ boxShadow: NEON_MARINOS }}
          >
-            <Image 
-              src={`${BUCKET_URL}/bannerplatosmarino.png`} 
-              alt="Marco Textil Platos Marinos" 
-              fill 
-              className="object-cover"
-              unoptimized
-            />
+           <Image 
+             src={`${BUCKET_URL}/bannerplatosmarino.png`} 
+             alt="Marco Textil Platos Marinos" 
+             fill 
+             className="object-cover" 
+             unoptimized
+           />
 
-            <div className="relative w-full h-[112px] rounded-[1.5rem] overflow-hidden bg-zinc-950">
-              <Image 
-                src={`${BUCKET_URL}/platosmarinos.jpg?v=2`}
-                alt="Platos Marinos" 
-                fill 
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                unoptimized
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent z-10" />
-              <div className="absolute bottom-2.5 left-3.5 z-20">
-                <h4 className="text-lg font-black text-white mb-0.5 font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                  Platos Marinos
-                </h4>
-                <p className="text-[9px] text-cyan-200/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                  Ceviches, Leche de Tigre y Combos
-                </p>
-              </div>
-            </div>
+           <div className="relative w-full h-[112px] rounded-[1.5rem] overflow-hidden bg-zinc-950">
+             <Image 
+               src={`${BUCKET_URL}/platosmarinos.jpg?v=2`}
+               alt="Platos Marinos" 
+               fill 
+               className="object-cover transition-transform duration-500 group-hover:scale-105" 
+               unoptimized
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent z-10" />
+             <div className="absolute bottom-2.5 left-3.5 z-20">
+               <h4 className="text-lg font-black text-white mb-0.5 font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                 Platos Marinos
+               </h4>
+               <p className="text-[9px] text-cyan-200/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                 Ceviches, Leche de Tigre y Arroz con Mariscos
+               </p>
+             </div>
+           </div>
          </Link>
 
          {/* 2. PLATOS CRIOLLOS (Neón Rojo Ají Panca + Borde 1.5px) */}
@@ -75,28 +76,28 @@ export function BentoCategoryGrid() {
            className="relative p-[1.5px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group"
            style={{ boxShadow: NEON_CRIOLLOS }}
          >
-            <Image 
-              src={`${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`} 
-              alt="Marco Textil Criollos" 
-              fill 
-              className="object-cover"
-              unoptimized
-            />
-            <div className="relative w-full h-[106px] rounded-[1.4rem] overflow-hidden bg-zinc-950">
-              <Image
-  src={`${BUCKET_URL}/platoscriollos.jpg?v=2`}
-  alt="Platos Criollos"
-  fill
-  className="object-cover group-hover:scale-105 transition-transform duration-500"
-  unoptimized
-/>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent z-10" />
-              <div className="absolute bottom-2.5 left-3 z-20">
-                <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                  Platos<br/>Criollos
-                </h4>
-              </div>
-            </div>
+           <Image 
+             src={`${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`} 
+             alt="Marco Textil Criollos" 
+             fill 
+             className="object-cover" 
+             unoptimized
+           />
+           <div className="relative w-full h-[106px] rounded-[1.4rem] overflow-hidden bg-zinc-950">
+             <Image
+               src={`${BUCKET_URL}/platoscriollos.jpg?v=2`}
+               alt="Platos Criollos"
+               fill
+               className="object-cover group-hover:scale-105 transition-transform duration-500"
+               unoptimized
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent z-10" />
+             <div className="absolute bottom-2.5 left-3 z-20">
+               <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                 Platos<br/>Criollos
+               </h4>
+             </div>
+           </div>
          </Link>
 
          {/* 3. POLLO A LA BRASA (Neón Ámbar Brasa + Borde 1.5px) */}
@@ -105,68 +106,127 @@ export function BentoCategoryGrid() {
            className="relative p-[1.5px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group"
            style={{ boxShadow: NEON_POLLO }}
          >
-            <Image 
-              src={`${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`} 
-              alt="Marco Textil Pollo a la Brasa" 
-              fill 
-              className="object-cover"
-              unoptimized
-            />
-            <div className="relative w-full h-[106px] rounded-[1.4rem] overflow-hidden bg-zinc-950">
-              <Image 
-                src={`${BUCKET_URL}/pollo_ala_brasa.jpg`} 
-                alt="Pollo a la Brasa" 
-                fill 
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                unoptimized
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent z-10" />
-              <div className="absolute bottom-2.5 left-3 z-20">
-                <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                  Pollo a<br/>la Brasa
-                </h4>
-              </div>
-            </div>
+           <Image 
+             src={`${BUCKET_URL}/bannerplatoscriollo-polloalabrasa.png`} 
+             alt="Marco Textil Pollo a la Brasa" 
+             fill 
+             className="object-cover" 
+             unoptimized
+           />
+           <div className="relative w-full h-[106px] rounded-[1.4rem] overflow-hidden bg-zinc-950">
+             <Image 
+               src={`${BUCKET_URL}/pollo_ala_brasa.jpg?v=2`} 
+               alt="Pollo a la Brasa" 
+               fill 
+               className="object-cover transition-transform duration-500 group-hover:scale-105" 
+               unoptimized
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent z-10" />
+             <div className="absolute bottom-2.5 left-3 z-20">
+               <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                 Pollo a<br/>la Brasa
+               </h4>
+             </div>
+           </div>
          </Link>
 
-         {/* 4. ENTRADAS (Neón Verde Esmeralda Andino + Borde 1.5px) */}
+         {/* 4. ENTRADAS (Con foto platosentradas.jpg + Neón Verde Esmeralda) */}
          <Link 
            href="/mantas/categoria/cat_entradas" 
            className="relative p-[1.5px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group"
            style={{ boxShadow: NEON_ENTRADAS }}
          >
-            <Image 
-              src={`${BUCKET_URL}/bannerentrada-bebidas.png`} 
-              alt="Entradas Textil" 
-              fill 
-              className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-              unoptimized
-            />
-            <div className="relative w-full h-[96px] rounded-[1.4rem] p-3 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/20 to-transparent z-10">
-              <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                Entradas
-              </h4>
-            </div>
+           <Image 
+             src={`${BUCKET_URL}/bannerentrada-bebidas.png`} 
+             alt="Marco Textil Entradas" 
+             fill 
+             className="object-cover" 
+             unoptimized
+           />
+           <div className="relative w-full h-[106px] rounded-[1.4rem] overflow-hidden bg-zinc-950">
+             <Image 
+               src={`${BUCKET_URL}/platosentradas.jpg?v=2`} 
+               alt="Entradas" 
+               fill 
+               className="object-cover transition-transform duration-500 group-hover:scale-105" 
+               unoptimized
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent z-10" />
+             <div className="absolute bottom-2.5 left-3 z-20">
+               <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                 Entradas
+               </h4>
+             </div>
+           </div>
          </Link>
 
-         {/* 5. BEBIDAS & TRAGOS (Neón Magenta Cóctel + Borde 1.5px) */}
+         {/* 5. BEBIDAS & TRAGOS (Con foto bevidas&trago.jpg + Neón Magenta) */}
          <Link 
            href="/mantas/categoria/cat_bebidas" 
            className="relative p-[1.5px] rounded-[1.5rem] overflow-hidden active:scale-95 transition-all text-left group"
            style={{ boxShadow: NEON_BEBIDAS }}
          >
-            <Image 
-              src={`${BUCKET_URL}/bannerentrada-bebidas.png`} 
-              alt="Bebidas & Tragos Textil" 
-              fill 
-              className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-              unoptimized
-            />
-            <div className="relative w-full h-[96px] rounded-[1.4rem] p-3 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/20 to-transparent z-10">
-              <h4 className="text-sm font-black text-white leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                Bebidas &<br/>Tragos
-              </h4>
-            </div>
+           <Image 
+             src={`${BUCKET_URL}/bannerentrada-bebidas.png`} 
+             alt="Marco Textil Bebidas" 
+             fill 
+             className="object-cover" 
+             unoptimized
+           />
+           <div className="relative w-full h-[106px] rounded-[1.4rem] overflow-hidden bg-zinc-950">
+             <Image 
+               src={`${BUCKET_URL}/bevidas%26trago.jpg?v=2`} 
+               alt="Bebidas y Tragos" 
+               fill 
+               className="object-cover transition-transform duration-500 group-hover:scale-105" 
+               unoptimized
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent z-10" />
+             <div className="absolute bottom-2.5 left-3 z-20">
+               <h4 className="text-sm font-black text-white leading-tight font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                 Bebidas &<br/>Tragos
+               </h4>
+             </div>
+           </div>
+         </Link>
+
+         {/* 6. DESAYUNOS DOMINICALES (Ancho completo - Cuadro Inferior) */}
+         <Link 
+           href="/mantas/categoria/cat_desayunos" 
+           className="col-span-2 relative p-[1.5px] rounded-[1.6rem] overflow-hidden group active:scale-[0.98] transition-all text-left"
+           style={{ boxShadow: NEON_DESAYUNOS }}
+         >
+           <Image 
+             src={`${BUCKET_URL}/tiramaestra.png`} 
+             alt="Marco Textil Desayunos" 
+             fill 
+             className="object-cover" 
+             unoptimized
+           />
+
+           <div className="relative w-full h-[112px] rounded-[1.5rem] overflow-hidden bg-zinc-950">
+             <Image 
+               src={`${BUCKET_URL}/desayunos.jpg?v=2`} 
+               alt="Desayunos Criollos" 
+               fill 
+               className="object-cover transition-transform duration-500 group-hover:scale-105" 
+               unoptimized
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent z-10" />
+             <div className="absolute bottom-2.5 left-3.5 z-20">
+               <div className="inline-flex items-center gap-1 bg-[#09090d]/85 border border-amber-400/40 rounded-full px-2 py-0.5 mb-1 backdrop-blur-sm">
+                 <span className="text-[8px] font-black uppercase tracking-wider text-amber-400">
+                   ✦ SOLO DOMINGOS (8:00 – 13:00)
+                 </span>
+               </div>
+               <h4 className="text-base font-black text-white font-serif leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                 Desayunos Criollos
+               </h4>
+               <p className="text-[9px] text-amber-200/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                 Pan con Chicharrón, Tamales y Jugos Naturales
+               </p>
+             </div>
+           </div>
          </Link>
 
       </div>
