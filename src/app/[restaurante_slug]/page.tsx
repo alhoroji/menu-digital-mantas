@@ -4,24 +4,18 @@
 import React from 'react';
 import { BellRing } from 'lucide-react';
 import Image from 'next/image';
-import { useMenuStatus } from '@/features/menu/hooks/useMenuStatus';
 import { SpotlightBanner } from '@/features/menu/components/SpotlightBanner';
 import { BentoCategoryGrid } from '@/features/menu/components/BentoCategoryGrid';
 import { BottomNavigationDock } from '@/features/navigation/components/BottomNavigationDock';
+
 const mockRestaurant = {
   name: "Mantas",
-  theme: { background: "#060608", primary: "#E4B363" },
-  schedules: {
-    menuDelDia: { isActive: true, startTime: "03:00", endTime: "16:00", daysOfWeek: [1, 2, 3, 4, 5] },
-    promocion: { isActive: true, startTime: "16:01", endTime: "23:59", daysOfWeek: [1, 2, 3, 4, 5] }
-  }
+  theme: { background: "#060608", primary: "#E4B363" }
 };
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
 
 export default function TenantMenuPage({ params }: { params: { restaurante_slug: string } }) {
-  const status = useMenuStatus(mockRestaurant.schedules.menuDelDia, mockRestaurant.schedules.promocion);
-
   return (
     <main 
       className="min-h-screen font-sans w-full sm:max-w-md mx-auto overflow-x-hidden text-zinc-100 selection:bg-zinc-800 relative flex flex-col pb-28"
@@ -62,15 +56,15 @@ export default function TenantMenuPage({ params }: { params: { restaurante_slug:
           src={`${BUCKET_URL}/cintaexplorarcarta.png`} 
           alt="Bordo Superiore Andino" 
           fill 
-          className="object-cover"
+          className="object-cover" 
           unoptimized 
           priority
         />
       </div>
 
-      {/* 3. SPOTLIGHT BANNER */}
+      {/* 3. SPOTLIGHT BANNER INTELIGENTE (Autónomo y Contextual) */}
       <div className="w-full px-5 mb-5 shrink-0">
-        <SpotlightBanner status={status} primaryColor={mockRestaurant.theme.primary} />
+        <SpotlightBanner />
       </div>
       
       {/* 4. GRIGLIA BENTO */}
