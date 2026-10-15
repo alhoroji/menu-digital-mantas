@@ -23,7 +23,6 @@ type DrawerStep = 'cart' | 'checkout';
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, updateQuantity, clearCart, getTotalAmount } = useCartStore();
 
-  // Paso 1: 'cart' (revisión de platos) | Paso 2: 'checkout' (formulario de envío)
   const [currentStep, setCurrentStep] = useState<DrawerStep>('cart');
   const [serviceType, setServiceType] = useState<ServiceMode>('delivery');
 
@@ -128,7 +127,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         onClick={(e) => e.stopPropagation()}
       >
         
-        {/* 1. Corona textil andina */}
+        {/* Corona textil andina */}
         <div className="relative w-full h-3 shrink-0 overflow-hidden shadow-sm">
           <Image
             src={`${BUCKET_URL}/cintaexplorarcarta.png`}
@@ -139,8 +138,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           />
         </div>
 
-        {/* 2. Cabecera Dinámica (según el paso activo) */}
-        <div className="px-5 py-3 border-b border-zinc-900 flex items-center justify-between shrink-0">
+        {/* Cabecera Inteligente */}
+        <div className="px-5 py-3 border-b border-zinc-900 flex items-center justify-between shrink-0 bg-[#0a0a0f]">
           {currentStep === 'cart' ? (
             <div>
               <h2 className="text-base font-black font-serif text-white tracking-wide">
@@ -154,14 +153,26 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <button
               type="button"
               onClick={handleBackToCart}
-              className="flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 active:scale-95 transition-all"
+              className="flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 active:scale-95 transition-all"
             >
               <ArrowLeft size={16} />
-              <span>Modifica Piatti ({items.length})</span>
+              <span>I Miei Piatti</span>
             </button>
           )}
 
           <div className="flex items-center gap-2">
+            {/* Si está en el paso de checkout, mostramos un botón rápido "Invia" en la cabecera siempre visible */}
+            {currentStep === 'checkout' && items.length > 0 && (
+              <button
+                type="button"
+                onClick={() => handleCheckoutWhatsApp()}
+                className="bg-emerald-500 hover:bg-emerald-400 text-black font-black text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1 active:scale-95 transition-transform shadow-[0_0_10px_rgba(16,185,129,0.35)]"
+              >
+                <MessageCircle size={13} strokeWidth={2.5} />
+                <span>Invia (€{totalAmount.toFixed(2)})</span>
+              </button>
+            )}
+
             {currentStep === 'cart' && items.length > 0 && (
               <button
                 type="button"
@@ -171,6 +182,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 Svuota
               </button>
             )}
+
             <button
               type="button"
               onClick={onClose}
@@ -182,7 +194,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         </div>
 
         {/* ============================================================== */}
-        {/* PASO 1: REVISIÓN DE PLATOS DEL CARRITO                         */}
+        {/* PASO 1: REVISIÓN DE PLATOS                                     */}
         {/* ============================================================== */}
         {currentStep === 'cart' && (
           <>
@@ -214,7 +226,6 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           </span>
                         </div>
 
-                        {/* Controles de Cantidad */}
                         <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-full px-2 py-1 shrink-0">
                           <button
                             type="button"
@@ -241,7 +252,6 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               )}
             </div>
 
-            {/* Footer Paso 1: Total y Botón para avanzar a los Datos */}
             {items.length > 0 && (
               <div className="p-4 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-3 shrink-0">
                 <div className="flex justify-between items-center px-1">
@@ -265,262 +275,268 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         )}
 
         {/* ============================================================== */}
-        {/* PASO 2: DATOS DE ENVÍO (ESPACIO 100% LIBRE PARA EL TECLADO)   */}
+        {/* PASO 2: DATOS DE ENVÍO + BOTÓN WHATSAPP INTEGRADO              */}
         {/* ============================================================== */}
         {currentStep === 'checkout' && (
-          <>
-            <form 
-              onSubmit={handleCheckoutWhatsApp} 
-              className="p-4 overflow-y-auto flex-1 space-y-3.5 overscroll-contain"
-            >
-              {/* Mini barra de resumen del pedido */}
-              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl px-3.5 py-2.5 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-zinc-300">
-                  <ShoppingBag size={14} className="text-amber-400" />
-                  <span>{items.length} {items.length === 1 ? 'piatto' : 'piatti'} ordinati</span>
-                </div>
-                <span className="text-xs font-mono font-bold text-amber-400">
-                  Totale: €{totalAmount.toFixed(2)}
-                </span>
+          <form 
+            onSubmit={handleCheckoutWhatsApp} 
+            className="p-4 overflow-y-auto flex-1 space-y-3.5 overscroll-contain"
+          >
+            {/* Resumen del Pedido */}
+            <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl px-3.5 py-2.5 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-zinc-300">
+                <ShoppingBag size={14} className="text-amber-400" />
+                <span>{items.length} {items.length === 1 ? 'piatto' : 'piatti'} selezionati</span>
               </div>
+              <span className="text-xs font-mono font-bold text-amber-400">
+                Totale: €{totalAmount.toFixed(2)}
+              </span>
+            </div>
 
-              {/* Selector de Modalidad */}
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1.5 px-1">
-                  Modalità di Ricezione
-                </span>
-                <div className="grid grid-cols-3 gap-1.5 p-1 bg-zinc-950 rounded-2xl border border-zinc-900">
-                  <button
-                    type="button"
-                    onClick={() => setServiceType('delivery')}
-                    className={`py-2 rounded-xl text-xs font-black transition-all ${
-                      serviceType === 'delivery'
-                        ? 'bg-amber-400 text-black shadow-md'
-                        : 'text-zinc-400 hover:text-zinc-200'
-                    }`}
-                  >
-                    Delivery
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setServiceType('llevar')}
-                    className={`py-2 rounded-xl text-xs font-black transition-all ${
-                      serviceType === 'llevar'
-                        ? 'bg-amber-400 text-black shadow-md'
-                        : 'text-zinc-400 hover:text-zinc-200'
-                    }`}
-                  >
-                    Asporto
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setServiceType('mesa')}
-                    className={`py-2 rounded-xl text-xs font-black transition-all ${
-                      serviceType === 'mesa'
-                        ? 'bg-amber-400 text-black shadow-md'
-                        : 'text-zinc-400 hover:text-zinc-200'
-                    }`}
-                  >
-                    Al Tavolo
-                  </button>
-                </div>
+            {/* Selector de Modalidad */}
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1.5 px-1">
+                Modalità di Ricezione
+              </span>
+              <div className="grid grid-cols-3 gap-1.5 p-1 bg-zinc-950 rounded-2xl border border-zinc-900">
+                <button
+                  type="button"
+                  onClick={() => setServiceType('delivery')}
+                  className={`py-2 rounded-xl text-xs font-black transition-all ${
+                    serviceType === 'delivery'
+                      ? 'bg-amber-400 text-black shadow-md'
+                      : 'text-zinc-400 hover:text-zinc-200'
+                  }`}
+                >
+                  Delivery
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setServiceType('llevar')}
+                  className={`py-2 rounded-xl text-xs font-black transition-all ${
+                    serviceType === 'llevar'
+                      ? 'bg-amber-400 text-black shadow-md'
+                      : 'text-zinc-400 hover:text-zinc-200'
+                  }`}
+                >
+                  Asporto
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setServiceType('mesa')}
+                  className={`py-2 rounded-xl text-xs font-black transition-all ${
+                    serviceType === 'mesa'
+                      ? 'bg-amber-400 text-black shadow-md'
+                      : 'text-zinc-400 hover:text-zinc-200'
+                  }`}
+                >
+                  Al Tavolo
+                </button>
               </div>
+            </div>
 
-              {/* CAMPOS DELIVERY */}
-              {serviceType === 'delivery' && (
-                <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
-                  <div>
+            {/* CAMPOS DELIVERY */}
+            {serviceType === 'delivery' && (
+              <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
+                <div>
+                  <label 
+                    htmlFor="delivery-name" 
+                    className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                  >
+                    <User size={13} className="text-amber-400" />
+                    Nome e Cognome *
+                  </label>
+                  <input
+                    id="delivery-name"
+                    type="text"
+                    autoComplete="name"
+                    enterKeyHint="next"
+                    placeholder="es. Mario Rossi"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="col-span-2">
                     <label 
-                      htmlFor="delivery-name" 
+                      htmlFor="delivery-address" 
                       className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
-                      <User size={13} className="text-amber-400" />
-                      Nome e Cognome *
+                      <MapPin size={13} className="text-amber-400" />
+                      Via / Indirizzo *
                     </label>
                     <input
-                      id="delivery-name"
+                      id="delivery-address"
                       type="text"
-                      autoFocus
-                      autoComplete="name"
-                      placeholder="es. Mario Rossi"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
+                      autoComplete="street-address"
+                      enterKeyHint="next"
+                      placeholder="es. Via Grassi"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                     />
                   </div>
-
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="col-span-2">
-                      <label 
-                        htmlFor="delivery-address" 
-                        className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
-                      >
-                        <MapPin size={13} className="text-amber-400" />
-                        Via / Indirizzo *
-                      </label>
-                      <input
-                        id="delivery-address"
-                        type="text"
-                        autoComplete="street-address"
-                        placeholder="es. Via Grassi"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label 
-                        htmlFor="delivery-civic" 
-                        className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer"
-                      >
-                        N° Civico *
-                      </label>
-                      <input
-                        id="delivery-civic"
-                        type="text"
-                        placeholder="es. 5"
-                        value={civicNumber}
-                        onChange={(e) => setCivicNumber(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label 
-                        htmlFor="delivery-intercom" 
-                        className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Bell size={13} className="text-zinc-400" />
-                        Citofono
-                      </label>
-                      <input
-                        id="delivery-intercom"
-                        type="text"
-                        placeholder="es. Rossi int. 4"
-                        value={intercom}
-                        onChange={(e) => setIntercom(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label 
-                        htmlFor="delivery-time" 
-                        className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Clock size={13} className="text-zinc-400" />
-                        Orario desiderato
-                      </label>
-                      <input
-                        id="delivery-time"
-                        type="text"
-                        placeholder="es. 20:30"
-                        value={requestedTime}
-                        onChange={(e) => setRequestedTime(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
-                      />
-                    </div>
-                  </div>
-
                   <div>
                     <label 
-                      htmlFor="delivery-notes" 
-                      className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                      htmlFor="delivery-civic" 
+                      className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer"
                     >
-                      <FileText size={13} className="text-zinc-400" />
-                      Note consegna (Scala, Piano...)
+                      N° Civico *
                     </label>
                     <input
-                      id="delivery-notes"
+                      id="delivery-civic"
                       type="text"
-                      placeholder="es. Scala B, 2° piano..."
-                      value={deliveryNotes}
-                      onChange={(e) => setDeliveryNotes(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      enterKeyHint="next"
+                      placeholder="es. 5"
+                      value={civicNumber}
+                      onChange={(e) => setCivicNumber(e.target.value)}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                     />
                   </div>
                 </div>
-              )}
 
-              {/* CAMPOS ASPORTO */}
-              {serviceType === 'llevar' && (
-                <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label 
-                      htmlFor="asporto-name" 
+                      htmlFor="delivery-intercom" 
                       className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
-                      <User size={13} className="text-amber-400" />
-                      Nome per il ritiro *
+                      <Bell size={13} className="text-zinc-400" />
+                      Citofono
                     </label>
                     <input
-                      id="asporto-name"
+                      id="delivery-intercom"
                       type="text"
-                      autoFocus
-                      placeholder="es. Mario"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
+                      enterKeyHint="next"
+                      placeholder="es. Rossi int. 4"
+                      value={intercom}
+                      onChange={(e) => setIntercom(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                   <div>
                     <label 
-                      htmlFor="asporto-time" 
+                      htmlFor="delivery-time" 
                       className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
                       <Clock size={13} className="text-zinc-400" />
-                      Orario di ritiro
+                      Orario desiderato
                     </label>
                     <input
-                      id="asporto-time"
+                      id="delivery-time"
                       type="text"
-                      placeholder="es. tra 25 minuti / 19:45"
+                      enterKeyHint="next"
+                      placeholder="es. 20:30"
                       value={requestedTime}
                       onChange={(e) => setRequestedTime(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                 </div>
-              )}
 
-              {/* CAMPOS AL TAVOLO */}
-              {serviceType === 'mesa' && (
-                <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
-                  <div>
-                    <label 
-                      htmlFor="tavolo-num" 
-                      className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer"
-                    >
-                      Numero di Tavolo *
-                    </label>
-                    <input
-                      id="tavolo-num"
-                      type="text"
-                      autoFocus
-                      placeholder="es. Tavolo 5"
-                      value={tableNumber}
-                      onChange={(e) => setTableNumber(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
-                    />
-                  </div>
+                <div>
+                  <label 
+                    htmlFor="delivery-notes" 
+                    className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                  >
+                    <FileText size={13} className="text-zinc-400" />
+                    Note consegna (Scala, Piano...)
+                  </label>
+                  <input
+                    id="delivery-notes"
+                    type="text"
+                    enterKeyHint="send"
+                    placeholder="es. Scala B, 2° piano..."
+                    value={deliveryNotes}
+                    onChange={(e) => setDeliveryNotes(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                  />
                 </div>
-              )}
+              </div>
+            )}
 
-            </form>
+            {/* CAMPOS ASPORTO */}
+            {serviceType === 'llevar' && (
+              <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
+                <div>
+                  <label 
+                    htmlFor="asporto-name" 
+                    className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                  >
+                    <User size={13} className="text-amber-400" />
+                    Nome per il ritiro *
+                  </label>
+                  <input
+                    id="asporto-name"
+                    type="text"
+                    enterKeyHint="next"
+                    placeholder="es. Mario"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                  />
+                </div>
+                <div>
+                  <label 
+                    htmlFor="asporto-time" 
+                    className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Clock size={13} className="text-zinc-400" />
+                    Orario di ritiro
+                  </label>
+                  <input
+                    id="asporto-time"
+                    type="text"
+                    enterKeyHint="send"
+                    placeholder="es. tra 25 minuti / 19:45"
+                    value={requestedTime}
+                    onChange={(e) => setRequestedTime(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                  />
+                </div>
+              </div>
+            )}
 
-            {/* Footer Paso 2: Botón de WhatsApp */}
-            <div className="p-3.5 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-2 shrink-0 z-30">
+            {/* CAMPOS AL TAVOLO */}
+            {serviceType === 'mesa' && (
+              <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
+                <div>
+                  <label 
+                    htmlFor="tavolo-num" 
+                    className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer"
+                  >
+                    Numero di Tavolo *
+                  </label>
+                  <input
+                    id="tavolo-num"
+                    type="text"
+                    enterKeyHint="send"
+                    placeholder="es. Tavolo 5"
+                    value={tableNumber}
+                    onChange={(e) => setTableNumber(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* BOTÓN PRINCIPAL INTEGRADO (DENTRO DEL FORMULARIO PARA QUE NUNCA QUEDE TAPADO) */}
+            <div className="pt-2 pb-8">
               <button
-                type="button"
-                onClick={() => handleCheckoutWhatsApp()}
-                className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3.5 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.35)]"
+                type="submit"
+                className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3.5 px-4 rounded-2xl active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.45)]"
               >
-                <MessageCircle size={17} strokeWidth={2.5} />
+                <MessageCircle size={18} strokeWidth={2.5} />
                 <span className="tracking-wider uppercase">Invia Ordine su WhatsApp (€{totalAmount.toFixed(2)})</span>
               </button>
+              <p className="text-[10px] text-zinc-500 text-center mt-2">
+                Si aprirà WhatsApp con il riepilogo del tuo ordine pronto per essere inviato.
+              </p>
             </div>
-          </>
+
+          </form>
         )}
 
       </div>
