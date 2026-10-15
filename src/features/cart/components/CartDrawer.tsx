@@ -1,7 +1,7 @@
 // src/features/cart/components/CartDrawer.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { 
   X, Plus, Minus, Trash2, MessageCircle, MapPin, 
@@ -10,8 +10,6 @@ import {
 import { useCartStore } from '@/features/cart/store/useCartStore';
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
-
-// Número oficial de WhatsApp de Mantas Milano
 const RESTAURANT_PHONE = "393513290178"; 
 
 interface CartDrawerProps {
@@ -25,8 +23,6 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, updateQuantity, clearCart, getTotalAmount } = useCartStore();
 
   const [serviceType, setServiceType] = useState<ServiceMode>('delivery');
-
-  // Control de colapso de platos
   const [isDishesCollapsed, setIsDishesCollapsed] = useState(false);
 
   // Campos de formulario
@@ -38,17 +34,42 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [requestedTime, setRequestedTime] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
 
+  // Control de altura dinámico según teclado virtual
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const updateHeight = () => {
+      if (window.visualViewport) {
+        setViewportHeight(window.visualViewport.height);
+      } else {
+        setViewportHeight(window.innerHeight);
+      }
+    };
+
+    updateHeight();
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateHeight);
+      window.visualViewport.addEventListener('scroll', updateHeight);
+    } else {
+      window.addEventListener('resize', updateHeight);
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateHeight);
+        window.visualViewport.removeEventListener('scroll', updateHeight);
+      } else {
+        window.removeEventListener('resize', updateHeight);
+      }
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const totalAmount = getTotalAmount();
-
-  // Al enfocar un campo, colapsamos el resumen de platos y centramos el input
-  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    setIsDishesCollapsed(true);
-    setTimeout(() => {
-      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 200);
-  };
 
   const handleCheckoutWhatsApp = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -124,9 +145,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
       onClick={onClose}
     >
-      {/* Contenedor del Drawer */}
+      {/* Contenedor del Drawer - Altura adaptada al viewport disponible */}
       <div 
-        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col h-[92dvh] max-h-[92dvh] touch-pan-y"
+        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col touch-pan-y transition-[height,max-height] duration-150"
+        style={{
+          maxHeight: viewportHeight ? `${Math.round(viewportHeight * 0.94)}px` : '90dvh',
+          height: viewportHeight ? `${Math.round(viewportHeight * 0.94)}px` : '90dvh',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -172,10 +197,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           </div>
         </div>
 
-        {/* 3. Área de Scroll Interno (con formulario nativo y padding inferior profundo) */}
+        {/* 3. Área de Scroll Interno (Sin padding excesivo, sin espacios en blanco) */}
         <form 
           onSubmit={handleCheckoutWhatsApp} 
-          className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 overscroll-contain pb-32 sm:pb-8"
+          className="p-4 overflow-y-auto flex-1 space-y-3.5 overscroll-contain pb-3"
         >
           
           {/* LISTA DE PLATOS */}
@@ -250,9 +275,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </div>
           )}
 
-          {/* FORMULARIO DE ENTREGA */}
+          {/* FORMULARIO DE RECEPCIÓN */}
           {items.length > 0 && (
-            <div className="pt-2 border-t border-zinc-900 space-y-3.5">
+            <div className="pt-2 border-t border-zinc-900 space-y-3">
               
               {/* Selector de Modalidad */}
               <div>
@@ -298,7 +323,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
               {/* CAMPOS DELIVERY */}
               {serviceType === 'delivery' && (
-                <div className="space-y-3 bg-zinc-950/60 p-3.5 rounded-2xl border border-zinc-900">
+                <div className="space-y-2.5 bg-zinc-950/60 p-3 rounded-2xl border border-zinc-900">
                   <div>
                     <label 
                       htmlFor="delivery-name" 
@@ -314,9 +339,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       enterKeyHint="next"
                       placeholder="es. Mario Rossi"
                       value={customerName}
-                      onFocus={handleInputFocus}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                     />
                   </div>
 
@@ -336,9 +360,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         enterKeyHint="next"
                         placeholder="es. Via Grassi"
                         value={address}
-                        onFocus={handleInputFocus}
                         onChange={(e) => setAddress(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                       />
                     </div>
                     <div>
@@ -354,9 +377,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         enterKeyHint="next"
                         placeholder="es. 5"
                         value={civicNumber}
-                        onFocus={handleInputFocus}
                         onChange={(e) => setCivicNumber(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                       />
                     </div>
                   </div>
@@ -376,9 +398,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         enterKeyHint="next"
                         placeholder="es. Rossi int. 4"
                         value={intercom}
-                        onFocus={handleInputFocus}
                         onChange={(e) => setIntercom(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                       />
                     </div>
                     <div>
@@ -395,9 +416,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         enterKeyHint="next"
                         placeholder="es. 20:30"
                         value={requestedTime}
-                        onFocus={handleInputFocus}
                         onChange={(e) => setRequestedTime(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                       />
                     </div>
                   </div>
@@ -416,9 +436,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       enterKeyHint="send"
                       placeholder="es. Scala B, 2° piano..."
                       value={deliveryNotes}
-                      onFocus={handleInputFocus}
                       onChange={(e) => setDeliveryNotes(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                 </div>
@@ -426,7 +445,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
               {/* CAMPOS ASPORTO */}
               {serviceType === 'llevar' && (
-                <div className="space-y-3 bg-zinc-950/60 p-3.5 rounded-2xl border border-zinc-900">
+                <div className="space-y-2.5 bg-zinc-950/60 p-3 rounded-2xl border border-zinc-900">
                   <div>
                     <label 
                       htmlFor="asporto-name" 
@@ -441,9 +460,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       enterKeyHint="next"
                       placeholder="es. Mario"
                       value={customerName}
-                      onFocus={handleInputFocus}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                   <div>
@@ -460,9 +478,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       enterKeyHint="send"
                       placeholder="es. tra 25 minuti / 19:45"
                       value={requestedTime}
-                      onFocus={handleInputFocus}
                       onChange={(e) => setRequestedTime(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                 </div>
@@ -470,7 +487,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
               {/* CAMPOS AL TAVOLO */}
               {serviceType === 'mesa' && (
-                <div className="space-y-3 bg-zinc-950/60 p-3.5 rounded-2xl border border-zinc-900">
+                <div className="space-y-2.5 bg-zinc-950/60 p-3 rounded-2xl border border-zinc-900">
                   <div>
                     <label 
                       htmlFor="tavolo-num" 
@@ -484,9 +501,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       enterKeyHint="send"
                       placeholder="es. Tavolo 5"
                       value={tableNumber}
-                      onFocus={handleInputFocus}
                       onChange={(e) => setTableNumber(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                 </div>
@@ -497,12 +513,12 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
         </form>
 
-        {/* 4. Pie con Total y Botón de WhatsApp (SIEMPRE VISIBLE Y CLICKEABLE) */}
+        {/* 4. Pie con Total y Botón de WhatsApp (Pegado de forma limpia al final) */}
         {items.length > 0 && (
-          <div className="p-4 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-2.5 shrink-0 z-30 shadow-[0_-8px_20px_rgba(0,0,0,0.7)]">
+          <div className="p-3.5 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-2 shrink-0 z-30 shadow-[0_-6px_16px_rgba(0,0,0,0.6)]">
             <div className="flex justify-between items-center px-1">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Totale Ordine</span>
-              <span className="text-xl font-black text-amber-400 font-mono">
+              <span className="text-lg font-black text-amber-400 font-mono">
                 €{totalAmount.toFixed(2)}
               </span>
             </div>
@@ -510,9 +526,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <button
               type="button"
               onClick={() => handleCheckoutWhatsApp()}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3.5 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.35)]"
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.35)]"
             >
-              <MessageCircle size={17} strokeWidth={2.5} />
+              <MessageCircle size={16} strokeWidth={2.5} />
               <span className="tracking-wider uppercase">Invia Ordine su WhatsApp</span>
             </button>
           </div>
