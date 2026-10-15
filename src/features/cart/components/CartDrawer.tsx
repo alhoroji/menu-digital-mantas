@@ -1,7 +1,7 @@
 // src/features/cart/components/CartDrawer.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { 
   X, Plus, Minus, Trash2, MessageCircle, MapPin, 
@@ -26,8 +26,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const [serviceType, setServiceType] = useState<ServiceMode>('delivery');
 
-  // Control de foco de teclado y colapso de platos
-  const [isTyping, setIsTyping] = useState(false);
+  // Control de colapso de platos
   const [isDishesCollapsed, setIsDishesCollapsed] = useState(false);
 
   // Campos de formulario
@@ -39,41 +38,20 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [requestedTime, setRequestedTime] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
 
-  // Detección de cierre de teclado en Android / iOS vía visualViewport
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.visualViewport) return;
-
-    const handleResize = () => {
-      if (window.visualViewport && window.visualViewport.height >= window.innerHeight * 0.78) {
-        setIsTyping(false);
-      }
-    };
-
-    window.visualViewport.addEventListener('resize', handleResize);
-    return () => {
-      window.visualViewport?.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
   if (!isOpen) return null;
 
   const totalAmount = getTotalAmount();
 
-  // Enfocar y auto-centrar el campo en pantalla al tocarlo
+  // Al enfocar un campo, colapsamos el resumen de platos y centramos el input
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    setIsTyping(true);
+    setIsDishesCollapsed(true);
     setTimeout(() => {
       e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 220);
+    }, 200);
   };
 
-  const handleInputBlur = () => {
-    setTimeout(() => {
-      setIsTyping(false);
-    }, 150);
-  };
-
-  const handleCheckoutWhatsApp = () => {
+  const handleCheckoutWhatsApp = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (items.length === 0) return;
 
     if (serviceType === 'mesa' && !tableNumber.trim()) {
@@ -143,12 +121,12 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200 overscroll-contain"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
       onClick={onClose}
     >
       {/* Contenedor del Drawer */}
       <div 
-        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col h-[90dvh] max-h-[90dvh] touch-pan-y"
+        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col h-[92dvh] max-h-[92dvh] touch-pan-y"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -164,7 +142,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         </div>
 
         {/* 2. Cabecera */}
-        <div className="px-5 py-3.5 border-b border-zinc-900 flex items-center justify-between shrink-0">
+        <div className="px-5 py-3 border-b border-zinc-900 flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-base font-black font-serif text-white tracking-wide">
               Il Tuo Ordine
@@ -194,10 +172,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           </div>
         </div>
 
-        {/* 3. Área de Scroll Interno */}
-        <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 overscroll-contain scroll-pb-24">
+        {/* 3. Área de Scroll Interno (con formulario nativo y padding inferior profundo) */}
+        <form 
+          onSubmit={handleCheckoutWhatsApp} 
+          className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 overscroll-contain pb-32 sm:pb-8"
+        >
           
-          {/* LISTA DE PLATOS (CON OPCIÓN DE COLAPSAR) */}
+          {/* LISTA DE PLATOS */}
           {items.length === 0 ? (
             <div className="py-12 text-center text-zinc-500">
               <span className="text-4xl block mb-2">🛒</span>
@@ -330,10 +311,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       id="delivery-name"
                       type="text"
                       autoComplete="name"
+                      enterKeyHint="next"
                       placeholder="es. Mario Rossi"
                       value={customerName}
                       onFocus={handleInputFocus}
-                      onBlur={handleInputBlur}
                       onChange={(e) => setCustomerName(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                     />
@@ -352,10 +333,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         id="delivery-address"
                         type="text"
                         autoComplete="street-address"
+                        enterKeyHint="next"
                         placeholder="es. Via Grassi"
                         value={address}
                         onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
                         onChange={(e) => setAddress(e.target.value)}
                         className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                       />
@@ -370,10 +351,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <input
                         id="delivery-civic"
                         type="text"
+                        enterKeyHint="next"
                         placeholder="es. 5"
                         value={civicNumber}
                         onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
                         onChange={(e) => setCivicNumber(e.target.value)}
                         className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                       />
@@ -392,10 +373,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <input
                         id="delivery-intercom"
                         type="text"
+                        enterKeyHint="next"
                         placeholder="es. Rossi int. 4"
                         value={intercom}
                         onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
                         onChange={(e) => setIntercom(e.target.value)}
                         className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                       />
@@ -411,10 +392,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <input
                         id="delivery-time"
                         type="text"
+                        enterKeyHint="next"
                         placeholder="es. 20:30"
                         value={requestedTime}
                         onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
                         onChange={(e) => setRequestedTime(e.target.value)}
                         className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                       />
@@ -432,10 +413,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="delivery-notes"
                       type="text"
+                      enterKeyHint="send"
                       placeholder="es. Scala B, 2° piano..."
                       value={deliveryNotes}
                       onFocus={handleInputFocus}
-                      onBlur={handleInputBlur}
                       onChange={(e) => setDeliveryNotes(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
@@ -457,10 +438,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="asporto-name"
                       type="text"
+                      enterKeyHint="next"
                       placeholder="es. Mario"
                       value={customerName}
                       onFocus={handleInputFocus}
-                      onBlur={handleInputBlur}
                       onChange={(e) => setCustomerName(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
@@ -476,10 +457,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="asporto-time"
                       type="text"
+                      enterKeyHint="send"
                       placeholder="es. tra 25 minuti / 19:45"
                       value={requestedTime}
                       onFocus={handleInputFocus}
-                      onBlur={handleInputBlur}
                       onChange={(e) => setRequestedTime(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
@@ -500,10 +481,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="tavolo-num"
                       type="text"
+                      enterKeyHint="send"
                       placeholder="es. Tavolo 5"
                       value={tableNumber}
                       onFocus={handleInputFocus}
-                      onBlur={handleInputBlur}
                       onChange={(e) => setTableNumber(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
@@ -514,13 +495,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </div>
           )}
 
-        </div>
+        </form>
 
-        {/* 4. Pie con Total y Botón de WhatsApp (Se oculta en móvil al escribir para no tapar los campos) */}
+        {/* 4. Pie con Total y Botón de WhatsApp (SIEMPRE VISIBLE Y CLICKEABLE) */}
         {items.length > 0 && (
-          <div className={`p-4 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-900 flex-col gap-3 shrink-0 ${isTyping ? 'hidden sm:flex' : 'flex'} animate-in fade-in duration-150`}>
+          <div className="p-4 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-2.5 shrink-0 z-30 shadow-[0_-8px_20px_rgba(0,0,0,0.7)]">
             <div className="flex justify-between items-center px-1">
-              <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Totale Ordine</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Totale Ordine</span>
               <span className="text-xl font-black text-amber-400 font-mono">
                 €{totalAmount.toFixed(2)}
               </span>
@@ -528,7 +509,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
             <button
               type="button"
-              onClick={handleCheckoutWhatsApp}
+              onClick={() => handleCheckoutWhatsApp()}
               className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3.5 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.35)]"
             >
               <MessageCircle size={17} strokeWidth={2.5} />
