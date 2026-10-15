@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { 
   X, Plus, Minus, Trash2, MessageCircle, MapPin, 
   User, Clock, Bell, FileText, ArrowLeft, ArrowRight, 
-  Banknote, CreditCard, Bike
+  Banknote, CreditCard, Bike, AlertTriangle
 } from 'lucide-react';
 import { useCartStore } from '@/features/cart/store/useCartStore';
 
@@ -31,6 +31,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [currentStep, setCurrentStep] = useState<DrawerStep>('cart');
   const [serviceType, setServiceType] = useState<ServiceMode>('delivery');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('contanti');
+
+  // Estados de restricción / confirmación de borrado
+  const [itemToDelete, setItemToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isClearingCart, setIsClearingCart] = useState(false);
 
   // Campos de formulario
   const [customerName, setCustomerName] = useState('');
@@ -57,12 +61,21 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     setCurrentStep('cart');
   };
 
-  // Eliminar plato directamente desde el paso de checkout
-  const handleRemoveDishAtCheckout = (dishId: string) => {
-    updateQuantity(dishId, 0);
+  // Confirmar eliminación del plato
+  const handleConfirmDeleteItem = () => {
+    if (!itemToDelete) return;
+    updateQuantity(itemToDelete.id, 0);
     if (items.length <= 1) {
       setCurrentStep('cart');
     }
+    setItemToDelete(null);
+  };
+
+  // Confirmar vaciado total del carrito
+  const handleConfirmClearCart = () => {
+    clearCart();
+    setCurrentStep('cart');
+    setIsClearingCart(false);
   };
 
   const handleCheckoutWhatsApp = (e?: React.FormEvent) => {
@@ -147,10 +160,80 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       onClick={onClose}
     >
       <div 
-        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col h-[90dvh] max-h-[90dvh] touch-pan-y"
+        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col h-[90dvh] max-h-[90dvh] touch-pan-y relative"
         onClick={(e) => e.stopPropagation()}
       >
         
+        {/* ============================================================== */}
+        {/* MODAL 1: CONFIRMAR ELIMINACIÓN DE PLATO INDIVIDUAL              */}
+        {/* ============================================================== */}
+        {itemToDelete && (
+          <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-5 animate-in fade-in duration-150">
+            <div className="w-full max-w-xs bg-zinc-950 border border-zinc-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mb-3 shadow-[0_0_12px_rgba(239,68,68,0.2)]">
+                <Trash2 size={22} />
+              </div>
+              <h3 className="text-sm font-black font-serif text-white">
+                Rimuovere piatto?
+              </h3>
+              <p className="text-xs text-zinc-400 mt-1 mb-5 font-medium leading-relaxed">
+                Sei sicuro di voler rimuovere <strong className="text-zinc-100">"{itemToDelete.name}"</strong> dall'ordine?
+              </p>
+              <div className="grid grid-cols-2 gap-2.5 w-full">
+                <button
+                  type="button"
+                  onClick={() => setItemToDelete(null)}
+                  className="py-2.5 px-3 rounded-xl text-xs font-bold bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white active:scale-95 transition-all"
+                >
+                  Annulla
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmDeleteItem}
+                  className="py-2.5 px-3 rounded-xl text-xs font-black bg-red-500 hover:bg-red-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.4)] active:scale-95 transition-all"
+                >
+                  Rimuovi
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* MODAL 2: CONFIRMAR VACIADO COMPLETO DEL CARRITO                */}
+        {/* ============================================================== */}
+        {isClearingCart && (
+          <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-5 animate-in fade-in duration-150">
+            <div className="w-full max-w-xs bg-zinc-950 border border-zinc-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-3 shadow-[0_0_12px_rgba(245,158,11,0.2)]">
+                <AlertTriangle size={22} />
+              </div>
+              <h3 className="text-sm font-black font-serif text-white">
+                Svuotare tutto il carrello?
+              </h3>
+              <p className="text-xs text-zinc-400 mt-1 mb-5 font-medium leading-relaxed">
+                Tutti i piatti selezionati verranno rimossi dal tuo ordine.
+              </p>
+              <div className="grid grid-cols-2 gap-2.5 w-full">
+                <button
+                  type="button"
+                  onClick={() => setIsClearingCart(false)}
+                  className="py-2.5 px-3 rounded-xl text-xs font-bold bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white active:scale-95 transition-all"
+                >
+                  Annulla
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmClearCart}
+                  className="py-2.5 px-3 rounded-xl text-xs font-black bg-red-500 hover:bg-red-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.4)] active:scale-95 transition-all"
+                >
+                  Svuota
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Ribete textil andino */}
         <div className="relative w-full h-3 shrink-0 overflow-hidden shadow-sm">
           <Image
@@ -199,7 +282,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {currentStep === 'cart' && items.length > 0 && (
               <button
                 type="button"
-                onClick={clearCart}
+                onClick={() => setIsClearingCart(true)}
                 className="text-xs text-zinc-400 hover:text-red-400 px-2 py-1 rounded-lg transition-colors"
               >
                 Svuota
@@ -252,7 +335,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-full px-2 py-1 shrink-0">
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.dish.id, item.quantity - 1)}
+                            onClick={() => {
+                              if (item.quantity === 1) {
+                                setItemToDelete({ id: item.dish.id, name: item.dish.name });
+                              } else {
+                                updateQuantity(item.dish.id, item.quantity - 1);
+                              }
+                            }}
                             className="w-6 h-6 rounded-full flex items-center justify-center text-zinc-400 hover:text-white active:scale-90"
                           >
                             {item.quantity === 1 ? <Trash2 size={12} className="text-red-400" /> : <Minus size={12} />}
@@ -298,7 +387,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         )}
 
         {/* ============================================================== */}
-        {/* PASO 2: DATOS DE ENVÍO + DESGLOSE CON SCROLL Y ELIMINACIÓN      */}
+        {/* PASO 2: DATOS DE ENVÍO + DESGLOSE CON SCROLL Y CONFIRMACIÓN     */}
         {/* ============================================================== */}
         {currentStep === 'checkout' && (
           <form 
@@ -395,7 +484,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             </div>
 
-            {/* 3. TARJETA DE RESUMEN CON SCROLL INDEPENDIENTE Y BOTÓN DE ELIMINAR */}
+            {/* 3. TARJETA DE RESUMEN CON SCROLL Y RESTRICCIÓN DE BORRADO */}
             <div className="bg-zinc-950/90 border border-zinc-900 rounded-2xl p-3.5 space-y-2.5 shadow-md">
               <div className="flex justify-between items-center border-b border-zinc-900 pb-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">
@@ -430,7 +519,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         </span>
                         <button
                           type="button"
-                          onClick={() => handleRemoveDishAtCheckout(item.dish.id)}
+                          onClick={() => setItemToDelete({ id: item.dish.id, name: item.dish.name })}
                           title="Rimuovi piatto"
                           className="w-6 h-6 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 active:bg-red-500/20 flex items-center justify-center transition-colors active:scale-90"
                         >
@@ -523,7 +612,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       placeholder="es. 5"
                       value={civicNumber}
                       onChange={(e) => setCivicNumber(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                     />
                   </div>
                 </div>
