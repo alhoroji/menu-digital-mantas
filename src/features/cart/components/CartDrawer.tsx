@@ -1,11 +1,11 @@
 // src/features/cart/components/CartDrawer.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { 
   X, Plus, Minus, Trash2, MessageCircle, MapPin, 
-  User, Clock, Bell, FileText, ChevronDown, ChevronUp 
+  User, Clock, Bell, FileText, ArrowLeft, ArrowRight, ShoppingBag 
 } from 'lucide-react';
 import { useCartStore } from '@/features/cart/store/useCartStore';
 
@@ -18,12 +18,14 @@ interface CartDrawerProps {
 }
 
 type ServiceMode = 'delivery' | 'llevar' | 'mesa';
+type DrawerStep = 'cart' | 'checkout';
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, updateQuantity, clearCart, getTotalAmount } = useCartStore();
 
+  // Paso 1: 'cart' (revisión de platos) | Paso 2: 'checkout' (formulario de envío)
+  const [currentStep, setCurrentStep] = useState<DrawerStep>('cart');
   const [serviceType, setServiceType] = useState<ServiceMode>('delivery');
-  const [isDishesCollapsed, setIsDishesCollapsed] = useState(false);
 
   // Campos de formulario
   const [customerName, setCustomerName] = useState('');
@@ -34,42 +36,18 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [requestedTime, setRequestedTime] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
 
-  // Control de altura dinámico según teclado virtual
-  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const updateHeight = () => {
-      if (window.visualViewport) {
-        setViewportHeight(window.visualViewport.height);
-      } else {
-        setViewportHeight(window.innerHeight);
-      }
-    };
-
-    updateHeight();
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', updateHeight);
-      window.visualViewport.addEventListener('scroll', updateHeight);
-    } else {
-      window.addEventListener('resize', updateHeight);
-    }
-
-    return () => {
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', updateHeight);
-        window.visualViewport.removeEventListener('scroll', updateHeight);
-      } else {
-        window.removeEventListener('resize', updateHeight);
-      }
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   const totalAmount = getTotalAmount();
+
+  const handleProceedToCheckout = () => {
+    if (items.length === 0) return;
+    setCurrentStep('checkout');
+  };
+
+  const handleBackToCart = () => {
+    setCurrentStep('cart');
+  };
 
   const handleCheckoutWhatsApp = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -142,16 +120,11 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
       onClick={onClose}
     >
-      {/* Contenedor del Drawer - Altura adaptada al viewport disponible */}
       <div 
-        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col touch-pan-y transition-[height,max-height] duration-150"
-        style={{
-          maxHeight: viewportHeight ? `${Math.round(viewportHeight * 0.94)}px` : '90dvh',
-          height: viewportHeight ? `${Math.round(viewportHeight * 0.94)}px` : '90dvh',
-        }}
+        className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col h-[90dvh] max-h-[90dvh] touch-pan-y"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -166,19 +139,30 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           />
         </div>
 
-        {/* 2. Cabecera */}
+        {/* 2. Cabecera Dinámica (según el paso activo) */}
         <div className="px-5 py-3 border-b border-zinc-900 flex items-center justify-between shrink-0">
-          <div>
-            <h2 className="text-base font-black font-serif text-white tracking-wide">
-              Il Tuo Ordine
-            </h2>
-            <p className="text-[11px] text-zinc-400">
-              {items.length} {items.length === 1 ? 'piatto selezionato' : 'piatti selezionati'}
-            </p>
-          </div>
+          {currentStep === 'cart' ? (
+            <div>
+              <h2 className="text-base font-black font-serif text-white tracking-wide">
+                Il Tuo Ordine
+              </h2>
+              <p className="text-[11px] text-zinc-400">
+                {items.length} {items.length === 1 ? 'piatto selezionato' : 'piatti selezionati'}
+              </p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleBackToCart}
+              className="flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 active:scale-95 transition-all"
+            >
+              <ArrowLeft size={16} />
+              <span>Modifica Piatti ({items.length})</span>
+            </button>
+          )}
 
           <div className="flex items-center gap-2">
-            {items.length > 0 && (
+            {currentStep === 'cart' && items.length > 0 && (
               <button
                 type="button"
                 onClick={clearCart}
@@ -197,40 +181,23 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           </div>
         </div>
 
-        {/* 3. Área de Scroll Interno (Sin padding excesivo, sin espacios en blanco) */}
-        <form 
-          onSubmit={handleCheckoutWhatsApp} 
-          className="p-4 overflow-y-auto flex-1 space-y-3.5 overscroll-contain pb-3"
-        >
-          
-          {/* LISTA DE PLATOS */}
-          {items.length === 0 ? (
-            <div className="py-12 text-center text-zinc-500">
-              <span className="text-4xl block mb-2">🛒</span>
-              <p className="text-sm font-semibold">Il carrello è vuoto.</p>
-              <p className="text-xs text-zinc-600 mt-1">Scegli i tuoi piatti dalla carta per continuare.</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block">
-                  Riepilogo Piatti ({items.length})
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsDishesCollapsed(!isDishesCollapsed)}
-                  className="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
-                >
-                  {isDishesCollapsed ? (
-                    <><span>Mostra dettagli</span> <ChevronDown size={13} /></>
-                  ) : (
-                    <><span>Comprimi</span> <ChevronUp size={13} /></>
-                  )}
-                </button>
-              </div>
-
-              {!isDishesCollapsed && (
-                <div className="space-y-2 pt-1 animate-in fade-in duration-200">
+        {/* ============================================================== */}
+        {/* PASO 1: REVISIÓN DE PLATOS DEL CARRITO                         */}
+        {/* ============================================================== */}
+        {currentStep === 'cart' && (
+          <>
+            <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-3">
+              {items.length === 0 ? (
+                <div className="py-16 text-center text-zinc-500">
+                  <span className="text-4xl block mb-2">🛒</span>
+                  <p className="text-sm font-semibold text-zinc-300">Il carrello è vuoto.</p>
+                  <p className="text-xs text-zinc-600 mt-1">Scegli i tuoi piatti dalla carta per continuare.</p>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block px-1">
+                    Piatti Aggiunti
+                  </span>
                   {items.map((item) => {
                     const price = item.dish.price.table || item.dish.price.standard;
                     return (
@@ -273,12 +240,50 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 </div>
               )}
             </div>
-          )}
 
-          {/* FORMULARIO DE RECEPCIÓN */}
-          {items.length > 0 && (
-            <div className="pt-2 border-t border-zinc-900 space-y-3">
-              
+            {/* Footer Paso 1: Total y Botón para avanzar a los Datos */}
+            {items.length > 0 && (
+              <div className="p-4 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-3 shrink-0">
+                <div className="flex justify-between items-center px-1">
+                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Totale Ordine</span>
+                  <span className="text-xl font-black text-amber-400 font-mono">
+                    €{totalAmount.toFixed(2)}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleProceedToCheckout}
+                  className="w-full bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-xs py-3.5 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
+                >
+                  <span className="tracking-wider uppercase">Procedi con i Dati di Consegna</span>
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ============================================================== */}
+        {/* PASO 2: DATOS DE ENVÍO (ESPACIO 100% LIBRE PARA EL TECLADO)   */}
+        {/* ============================================================== */}
+        {currentStep === 'checkout' && (
+          <>
+            <form 
+              onSubmit={handleCheckoutWhatsApp} 
+              className="p-4 overflow-y-auto flex-1 space-y-3.5 overscroll-contain"
+            >
+              {/* Mini barra de resumen del pedido */}
+              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl px-3.5 py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-zinc-300">
+                  <ShoppingBag size={14} className="text-amber-400" />
+                  <span>{items.length} {items.length === 1 ? 'piatto' : 'piatti'} ordinati</span>
+                </div>
+                <span className="text-xs font-mono font-bold text-amber-400">
+                  Totale: €{totalAmount.toFixed(2)}
+                </span>
+              </div>
+
               {/* Selector de Modalidad */}
               <div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1.5 px-1">
@@ -323,7 +328,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
               {/* CAMPOS DELIVERY */}
               {serviceType === 'delivery' && (
-                <div className="space-y-2.5 bg-zinc-950/60 p-3 rounded-2xl border border-zinc-900">
+                <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
                   <div>
                     <label 
                       htmlFor="delivery-name" 
@@ -335,12 +340,12 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="delivery-name"
                       type="text"
+                      autoFocus
                       autoComplete="name"
-                      enterKeyHint="next"
                       placeholder="es. Mario Rossi"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                     />
                   </div>
 
@@ -357,11 +362,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         id="delivery-address"
                         type="text"
                         autoComplete="street-address"
-                        enterKeyHint="next"
                         placeholder="es. Via Grassi"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                       />
                     </div>
                     <div>
@@ -374,11 +378,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <input
                         id="delivery-civic"
                         type="text"
-                        enterKeyHint="next"
                         placeholder="es. 5"
                         value={civicNumber}
                         onChange={(e) => setCivicNumber(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
                       />
                     </div>
                   </div>
@@ -395,11 +398,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <input
                         id="delivery-intercom"
                         type="text"
-                        enterKeyHint="next"
                         placeholder="es. Rossi int. 4"
                         value={intercom}
                         onChange={(e) => setIntercom(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                       />
                     </div>
                     <div>
@@ -413,11 +415,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <input
                         id="delivery-time"
                         type="text"
-                        enterKeyHint="next"
                         placeholder="es. 20:30"
                         value={requestedTime}
                         onChange={(e) => setRequestedTime(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                       />
                     </div>
                   </div>
@@ -433,11 +434,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="delivery-notes"
                       type="text"
-                      enterKeyHint="send"
                       placeholder="es. Scala B, 2° piano..."
                       value={deliveryNotes}
                       onChange={(e) => setDeliveryNotes(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                 </div>
@@ -445,7 +445,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
               {/* CAMPOS ASPORTO */}
               {serviceType === 'llevar' && (
-                <div className="space-y-2.5 bg-zinc-950/60 p-3 rounded-2xl border border-zinc-900">
+                <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
                   <div>
                     <label 
                       htmlFor="asporto-name" 
@@ -457,11 +457,11 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="asporto-name"
                       type="text"
-                      enterKeyHint="next"
+                      autoFocus
                       placeholder="es. Mario"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                   <div>
@@ -475,11 +475,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="asporto-time"
                       type="text"
-                      enterKeyHint="send"
                       placeholder="es. tra 25 minuti / 19:45"
                       value={requestedTime}
                       onChange={(e) => setRequestedTime(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                 </div>
@@ -487,7 +486,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
               {/* CAMPOS AL TAVOLO */}
               {serviceType === 'mesa' && (
-                <div className="space-y-2.5 bg-zinc-950/60 p-3 rounded-2xl border border-zinc-900">
+                <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
                   <div>
                     <label 
                       htmlFor="tavolo-num" 
@@ -498,40 +497,30 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <input
                       id="tavolo-num"
                       type="text"
-                      enterKeyHint="send"
+                      autoFocus
                       placeholder="es. Tavolo 5"
                       value={tableNumber}
                       onChange={(e) => setTableNumber(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                 </div>
               )}
 
+            </form>
+
+            {/* Footer Paso 2: Botón de WhatsApp */}
+            <div className="p-3.5 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-2 shrink-0 z-30">
+              <button
+                type="button"
+                onClick={() => handleCheckoutWhatsApp()}
+                className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3.5 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.35)]"
+              >
+                <MessageCircle size={17} strokeWidth={2.5} />
+                <span className="tracking-wider uppercase">Invia Ordine su WhatsApp (€{totalAmount.toFixed(2)})</span>
+              </button>
             </div>
-          )}
-
-        </form>
-
-        {/* 4. Pie con Total y Botón de WhatsApp (Pegado de forma limpia al final) */}
-        {items.length > 0 && (
-          <div className="p-3.5 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-2 shrink-0 z-30 shadow-[0_-6px_16px_rgba(0,0,0,0.6)]">
-            <div className="flex justify-between items-center px-1">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Totale Ordine</span>
-              <span className="text-lg font-black text-amber-400 font-mono">
-                €{totalAmount.toFixed(2)}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => handleCheckoutWhatsApp()}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.35)]"
-            >
-              <MessageCircle size={16} strokeWidth={2.5} />
-              <span className="tracking-wider uppercase">Invia Ordine su WhatsApp</span>
-            </button>
-          </div>
+          </>
         )}
 
       </div>
