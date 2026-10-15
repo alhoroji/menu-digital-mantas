@@ -6,14 +6,14 @@ import Image from 'next/image';
 import { 
   X, Plus, Minus, Trash2, MessageCircle, MapPin, 
   User, Clock, Bell, FileText, ArrowLeft, ArrowRight, 
-  ShoppingBag, Banknote, CreditCard, Bike
+  Banknote, CreditCard, Bike
 } from 'lucide-react';
 import { useCartStore } from '@/features/cart/store/useCartStore';
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
 const RESTAURANT_PHONE = "393513290178"; 
 
-// Costo fijo de envío delivery (personalizable)
+// Costo fijo de envío delivery
 const DELIVERY_FEE = 5.00;
 
 interface CartDrawerProps {
@@ -55,6 +55,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const handleBackToCart = () => {
     setCurrentStep('cart');
+  };
+
+  // Eliminar plato directamente desde el paso de checkout
+  const handleRemoveDishAtCheckout = (dishId: string) => {
+    updateQuantity(dishId, 0);
+    if (items.length <= 1) {
+      setCurrentStep('cart');
+    }
   };
 
   const handleCheckoutWhatsApp = (e?: React.FormEvent) => {
@@ -172,7 +180,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               className="flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 active:scale-95 transition-all"
             >
               <ArrowLeft size={16} />
-              <span>I Miei Piatti</span>
+              <span>Torna al Carrello</span>
             </button>
           )}
 
@@ -290,7 +298,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         )}
 
         {/* ============================================================== */}
-        {/* PASO 2: DATOS DE ENVÍO + COSTO DELIVERY + MÉTODO DE PAGO       */}
+        {/* PASO 2: DATOS DE ENVÍO + DESGLOSE CON SCROLL Y ELIMINACIÓN      */}
         {/* ============================================================== */}
         {currentStep === 'checkout' && (
           <form 
@@ -387,26 +395,74 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             </div>
 
-            {/* 3. Desglose Financiero con Costo de Consegna */}
-            <div className="bg-zinc-950/80 border border-zinc-900 rounded-2xl p-3.5 space-y-1.5">
-              <div className="flex justify-between items-center text-xs text-zinc-400">
-                <span>Subtotale Piatti ({items.length})</span>
-                <span className="font-mono text-zinc-200">€{dishesTotal.toFixed(2)}</span>
+            {/* 3. TARJETA DE RESUMEN CON SCROLL INDEPENDIENTE Y BOTÓN DE ELIMINAR */}
+            <div className="bg-zinc-950/90 border border-zinc-900 rounded-2xl p-3.5 space-y-2.5 shadow-md">
+              <div className="flex justify-between items-center border-b border-zinc-900 pb-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">
+                  Dettaglio Piatti ({items.length})
+                </span>
+                <span className="text-[9px] text-zinc-500 font-medium">
+                  Scorri per vedere tutti
+                </span>
               </div>
 
-              {serviceType === 'delivery' && (
-                <div className="flex justify-between items-center text-xs text-amber-400/90 font-medium pt-1 border-t border-zinc-900">
-                  <span className="flex items-center gap-1.5">
-                    <Bike size={13} className="text-amber-400" />
-                    Costo Spedizione Delivery
-                  </span>
-                  <span className="font-mono font-bold">+ €{DELIVERY_FEE.toFixed(2)}</span>
-                </div>
-              )}
+              {/* LISTA DE PLATOS CON SCROLL INDEPENDIENTE */}
+              <div className="max-h-28 overflow-y-auto space-y-1.5 pr-1 divide-y divide-zinc-900/60 overscroll-contain">
+                {items.map((item) => {
+                  const price = item.dish.price.table || item.dish.price.standard;
+                  return (
+                    <div 
+                      key={item.dish.id} 
+                      className="pt-1.5 first:pt-0 flex items-center justify-between gap-2 text-xs group"
+                    >
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="text-amber-400 font-mono font-bold shrink-0 text-[11px]">
+                          {item.quantity}x
+                        </span>
+                        <span className="text-zinc-200 font-serif font-medium truncate text-xs">
+                          {item.dish.name}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="font-mono text-zinc-300 text-xs font-semibold">
+                          €{(price * item.quantity).toFixed(2)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveDishAtCheckout(item.dish.id)}
+                          title="Rimuovi piatto"
+                          className="w-6 h-6 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 active:bg-red-500/20 flex items-center justify-center transition-colors active:scale-90"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
-              <div className="flex justify-between items-center text-sm font-black text-white pt-1.5 border-t border-zinc-800">
-                <span>Totale da Pagare</span>
-                <span className="text-base text-amber-400 font-mono">€{finalTotal.toFixed(2)}</span>
+              {/* DESGLOSE FINANCIERO */}
+              <div className="pt-2 border-t border-zinc-900 space-y-1.5">
+                <div className="flex justify-between items-center text-xs text-zinc-400">
+                  <span>Subtotale Piatti</span>
+                  <span className="font-mono font-semibold text-zinc-200">€{dishesTotal.toFixed(2)}</span>
+                </div>
+
+                {serviceType === 'delivery' && (
+                  <div className="flex justify-between items-center text-xs text-amber-400/90 font-medium pt-1 border-t border-zinc-900/80">
+                    <span className="flex items-center gap-1.5">
+                      <Bike size={13} className="text-amber-400" />
+                      Costo Spedizione Delivery
+                    </span>
+                    <span className="font-mono font-bold">+ €{DELIVERY_FEE.toFixed(2)}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center text-sm font-black text-white pt-1.5 border-t border-zinc-800">
+                  <span>Totale da Pagare</span>
+                  <span className="text-base text-amber-400 font-mono">€{finalTotal.toFixed(2)}</span>
+                </div>
               </div>
             </div>
 
@@ -467,7 +523,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       placeholder="es. 5"
                       value={civicNumber}
                       onChange={(e) => setCivicNumber(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
                     />
                   </div>
                 </div>
@@ -597,7 +653,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             )}
 
-            {/* BOTÓN PRINCIPAL INTEGRADO (DENTRO DEL FORMULARIO) */}
+            {/* BOTÓN PRINCIPAL INTEGRADO AL FINAL DEL FORMULARIO */}
             <div className="pt-2 pb-8">
               <button
                 type="submit"
