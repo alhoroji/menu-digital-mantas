@@ -5,12 +5,16 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { 
   X, Plus, Minus, Trash2, MessageCircle, MapPin, 
-  User, Clock, Bell, FileText, ArrowLeft, ArrowRight, ShoppingBag 
+  User, Clock, Bell, FileText, ArrowLeft, ArrowRight, 
+  ShoppingBag, Banknote, CreditCard, Bike
 } from 'lucide-react';
 import { useCartStore } from '@/features/cart/store/useCartStore';
 
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
 const RESTAURANT_PHONE = "393513290178"; 
+
+// Costo fijo de envío delivery (personalizable)
+const DELIVERY_FEE = 5.00;
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -18,6 +22,7 @@ interface CartDrawerProps {
 }
 
 type ServiceMode = 'delivery' | 'llevar' | 'mesa';
+type PaymentMethod = 'contanti' | 'carta';
 type DrawerStep = 'cart' | 'checkout';
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
@@ -25,6 +30,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const [currentStep, setCurrentStep] = useState<DrawerStep>('cart');
   const [serviceType, setServiceType] = useState<ServiceMode>('delivery');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('contanti');
 
   // Campos de formulario
   const [customerName, setCustomerName] = useState('');
@@ -37,7 +43,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   if (!isOpen) return null;
 
-  const totalAmount = getTotalAmount();
+  // Cálculos de importes
+  const dishesTotal = getTotalAmount();
+  const deliveryFee = serviceType === 'delivery' ? DELIVERY_FEE : 0;
+  const finalTotal = dishesTotal + deliveryFee;
 
   const handleProceedToCheckout = () => {
     if (items.length === 0) return;
@@ -82,10 +91,12 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       lines.push(`📍 *Modalità:* Al Tavolo`);
       lines.push(`🪑 *Tavolo:* ${tableNumber}`);
       if (customerName) lines.push(`👤 *Cliente:* ${customerName}`);
+      lines.push(`💳 *Pagamento:* ${paymentMethod === 'contanti' ? 'Contanti' : 'Carta / POS'}`);
     } else if (serviceType === 'llevar') {
       lines.push(`🥡 *Modalità:* Ritiro in Locale (Asporto)`);
       lines.push(`👤 *Cliente:* ${customerName}`);
       if (requestedTime) lines.push(`⏰ *Orario ritiro:* ${requestedTime}`);
+      lines.push(`💳 *Pagamento:* ${paymentMethod === 'contanti' ? 'Contanti in cassa' : 'Carta in cassa'}`);
       if (deliveryNotes) lines.push(`📝 *Note:* ${deliveryNotes}`);
     } else {
       lines.push(`🛵 *Modalità:* A Domicilio (Delivery)`);
@@ -93,6 +104,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       lines.push(`📍 *Indirizzo:* ${address}, N° ${civicNumber}`);
       if (intercom) lines.push(`🔔 *Citofono:* ${intercom}`);
       if (requestedTime) lines.push(`⏰ *Orario consegna:* ${requestedTime}`);
+      lines.push(`💳 *Pagamento:* ${paymentMethod === 'contanti' ? '💵 Contanti alla consegna' : '💳 Carta (Portare POS a domicilio)'}`);
       if (deliveryNotes) lines.push(`📝 *Note consegna:* ${deliveryNotes}`);
     }
 
@@ -107,7 +119,11 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     });
 
     lines.push(`──────────────────────`);
-    lines.push(`💰 *TOTALE: €${totalAmount.toFixed(2)}*`);
+    lines.push(`Subtotale piatti: €${dishesTotal.toFixed(2)}`);
+    if (serviceType === 'delivery') {
+      lines.push(`Spedizione a domicilio: €${DELIVERY_FEE.toFixed(2)}`);
+    }
+    lines.push(`💰 *TOTALE FINALE: €${finalTotal.toFixed(2)}*`);
     lines.push(`──────────────────────`);
     lines.push(`_Inviato da Mantas Web App_`);
 
@@ -127,7 +143,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         onClick={(e) => e.stopPropagation()}
       >
         
-        {/* Corona textil andina */}
+        {/* Ribete textil andino */}
         <div className="relative w-full h-3 shrink-0 overflow-hidden shadow-sm">
           <Image
             src={`${BUCKET_URL}/cintaexplorarcarta.png`}
@@ -161,7 +177,6 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           )}
 
           <div className="flex items-center gap-2">
-            {/* Si está en el paso de checkout, mostramos un botón rápido "Invia" en la cabecera siempre visible */}
             {currentStep === 'checkout' && items.length > 0 && (
               <button
                 type="button"
@@ -169,7 +184,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 className="bg-emerald-500 hover:bg-emerald-400 text-black font-black text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1 active:scale-95 transition-transform shadow-[0_0_10px_rgba(16,185,129,0.35)]"
               >
                 <MessageCircle size={13} strokeWidth={2.5} />
-                <span>Invia (€{totalAmount.toFixed(2)})</span>
+                <span>Invia (€{finalTotal.toFixed(2)})</span>
               </button>
             )}
 
@@ -255,9 +270,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {items.length > 0 && (
               <div className="p-4 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-3 shrink-0">
                 <div className="flex justify-between items-center px-1">
-                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Totale Ordine</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Subtotale Piatti</span>
                   <span className="text-xl font-black text-amber-400 font-mono">
-                    €{totalAmount.toFixed(2)}
+                    €{dishesTotal.toFixed(2)}
                   </span>
                 </div>
 
@@ -275,25 +290,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         )}
 
         {/* ============================================================== */}
-        {/* PASO 2: DATOS DE ENVÍO + BOTÓN WHATSAPP INTEGRADO              */}
+        {/* PASO 2: DATOS DE ENVÍO + COSTO DELIVERY + MÉTODO DE PAGO       */}
         {/* ============================================================== */}
         {currentStep === 'checkout' && (
           <form 
             onSubmit={handleCheckoutWhatsApp} 
             className="p-4 overflow-y-auto flex-1 space-y-3.5 overscroll-contain"
           >
-            {/* Resumen del Pedido */}
-            <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl px-3.5 py-2.5 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs text-zinc-300">
-                <ShoppingBag size={14} className="text-amber-400" />
-                <span>{items.length} {items.length === 1 ? 'piatto' : 'piatti'} selezionati</span>
-              </div>
-              <span className="text-xs font-mono font-bold text-amber-400">
-                Totale: €{totalAmount.toFixed(2)}
-              </span>
-            </div>
-
-            {/* Selector de Modalidad */}
+            {/* 1. Selector de Modalidad */}
             <div>
               <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1.5 px-1">
                 Modalità di Ricezione
@@ -335,7 +339,78 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             </div>
 
-            {/* CAMPOS DELIVERY */}
+            {/* 2. Selector de Método de Pago */}
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1.5 px-1">
+                Metodo di Pagamento
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('contanti')}
+                  className={`p-3 rounded-2xl border flex items-center gap-2.5 transition-all text-left ${
+                    paymentMethod === 'contanti'
+                      ? 'bg-zinc-900 border-amber-400 text-white shadow-sm'
+                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                  }`}
+                >
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                    paymentMethod === 'contanti' ? 'bg-amber-400 text-black' : 'bg-zinc-900 text-zinc-400'
+                  }`}>
+                    <Banknote size={18} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black block leading-tight">Contanti</span>
+                    <span className="text-[9px] text-zinc-500">Alla consegna</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('carta')}
+                  className={`p-3 rounded-2xl border flex items-center gap-2.5 transition-all text-left ${
+                    paymentMethod === 'carta'
+                      ? 'bg-zinc-900 border-amber-400 text-white shadow-sm'
+                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                  }`}
+                >
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                    paymentMethod === 'carta' ? 'bg-amber-400 text-black' : 'bg-zinc-900 text-zinc-400'
+                  }`}>
+                    <CreditCard size={18} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black block leading-tight">Carta / POS</span>
+                    <span className="text-[9px] text-zinc-500">Portatile a domicilio</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* 3. Desglose Financiero con Costo de Consegna */}
+            <div className="bg-zinc-950/80 border border-zinc-900 rounded-2xl p-3.5 space-y-1.5">
+              <div className="flex justify-between items-center text-xs text-zinc-400">
+                <span>Subtotale Piatti ({items.length})</span>
+                <span className="font-mono text-zinc-200">€{dishesTotal.toFixed(2)}</span>
+              </div>
+
+              {serviceType === 'delivery' && (
+                <div className="flex justify-between items-center text-xs text-amber-400/90 font-medium pt-1 border-t border-zinc-900">
+                  <span className="flex items-center gap-1.5">
+                    <Bike size={13} className="text-amber-400" />
+                    Costo Spedizione Delivery
+                  </span>
+                  <span className="font-mono font-bold">+ €{DELIVERY_FEE.toFixed(2)}</span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center text-sm font-black text-white pt-1.5 border-t border-zinc-800">
+                <span>Totale da Pagare</span>
+                <span className="text-base text-amber-400 font-mono">€{finalTotal.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* 4. Formulario de Datos Delivery */}
             {serviceType === 'delivery' && (
               <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
                 <div>
@@ -457,7 +532,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             )}
 
-            {/* CAMPOS ASPORTO */}
+            {/* Formulario Asporto */}
             {serviceType === 'llevar' && (
               <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
                 <div>
@@ -499,7 +574,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             )}
 
-            {/* CAMPOS AL TAVOLO */}
+            {/* Formulario Al Tavolo */}
             {serviceType === 'mesa' && (
               <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
                 <div>
@@ -522,17 +597,17 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             )}
 
-            {/* BOTÓN PRINCIPAL INTEGRADO (DENTRO DEL FORMULARIO PARA QUE NUNCA QUEDE TAPADO) */}
+            {/* BOTÓN PRINCIPAL INTEGRADO (DENTRO DEL FORMULARIO) */}
             <div className="pt-2 pb-8">
               <button
                 type="submit"
                 className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3.5 px-4 rounded-2xl active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.45)]"
               >
                 <MessageCircle size={18} strokeWidth={2.5} />
-                <span className="tracking-wider uppercase">Invia Ordine su WhatsApp (€{totalAmount.toFixed(2)})</span>
+                <span className="tracking-wider uppercase">Invia Ordine su WhatsApp (€{finalTotal.toFixed(2)})</span>
               </button>
               <p className="text-[10px] text-zinc-500 text-center mt-2">
-                Si aprirà WhatsApp con il riepilogo del tuo ordine pronto per essere inviato.
+                Conferma via WhatsApp • Pagamento: {paymentMethod === 'contanti' ? 'Contanti alla consegna' : 'Carta con POS a domicilio'}
               </p>
             </div>
 
