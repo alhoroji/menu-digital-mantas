@@ -83,54 +83,54 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     if (items.length === 0) return;
 
     if (serviceType === 'mesa' && !tableNumber.trim()) {
-      alert('Per favore indica il numero del tuo tavolo.');
+      alert('Por favor indica el número de tu mesa.');
       return;
     }
 
     if (serviceType === 'llevar' && !customerName.trim()) {
-      alert('Per favore indica il nome per il ritiro.');
+      alert('Por favor indica el nombre para el retiro.');
       return;
     }
 
     if (serviceType === 'delivery') {
       if (!customerName.trim()) {
-        alert('Per favore inserisci il nome del destinatario.');
+        alert('Por favor ingresa el nombre del destinatario.');
         return;
       }
       if (!address.trim() || !civicNumber.trim()) {
-        alert('Per favore indica la via e il numero civico.');
+        alert('Por favor indica la calle y el número cívico.');
         return;
       }
     }
 
     const lines: string[] = [
-      `*🍽️ NUOVO ORDINE - MANTAS MILANO*`,
+      `*🍽️ NUEVO PEDIDO - MANTAS MILANO*`,
       `──────────────────────`
     ];
 
     if (serviceType === 'mesa') {
-      lines.push(`📍 *Modalità:* Al Tavolo`);
-      lines.push(`🪑 *Tavolo:* ${tableNumber}`);
+      lines.push(`📍 *Modalidad:* En Mesa`);
+      lines.push(`🪑 *Mesa:* ${tableNumber}`);
       if (customerName) lines.push(`👤 *Cliente:* ${customerName}`);
-      lines.push(`💳 *Pagamento:* ${paymentMethod === 'contanti' ? 'Contanti' : 'Carta / POS'}`);
+      lines.push(`💳 *Pago:* ${paymentMethod === 'contanti' ? 'Efectivo' : 'Tarjeta / POS'}`);
     } else if (serviceType === 'llevar') {
-      lines.push(`🥡 *Modalità:* Ritiro in Locale (Asporto)`);
+      lines.push(`🥡 *Modalidad:* Retiro en Local (Para Llevar)`);
       lines.push(`👤 *Cliente:* ${customerName}`);
-      if (requestedTime) lines.push(`⏰ *Orario ritiro:* ${requestedTime}`);
-      lines.push(`💳 *Pagamento:* ${paymentMethod === 'contanti' ? 'Contanti in cassa' : 'Carta in cassa'}`);
-      if (deliveryNotes) lines.push(`📝 *Note:* ${deliveryNotes}`);
+      if (requestedTime) lines.push(`⏰ *Hora de retiro:* ${requestedTime}`);
+      lines.push(`💳 *Pago:* ${paymentMethod === 'contanti' ? 'Efectivo en caja' : 'Tarjeta en caja'}`);
+      if (deliveryNotes) lines.push(`📝 *Notas:* ${deliveryNotes}`);
     } else {
-      lines.push(`🛵 *Modalità:* A Domicilio (Delivery)`);
+      lines.push(`🛵 *Modalidad:* A Domicilio (Delivery)`);
       lines.push(`👤 *Cliente:* ${customerName}`);
-      lines.push(`📍 *Indirizzo:* ${address}, N° ${civicNumber}`);
-      if (intercom) lines.push(`🔔 *Citofono:* ${intercom}`);
-      if (requestedTime) lines.push(`⏰ *Orario consegna:* ${requestedTime}`);
-      lines.push(`💳 *Pagamento:* ${paymentMethod === 'contanti' ? '💵 Contanti alla consegna' : '💳 Carta (Portare POS a domicilio)'}`);
-      if (deliveryNotes) lines.push(`📝 *Note consegna:* ${deliveryNotes}`);
+      lines.push(`📍 *Dirección:* ${address}, N° ${civicNumber}`);
+      if (intercom) lines.push(`🔔 *Timbre / Intercomunicador:* ${intercom}`);
+      if (requestedTime) lines.push(`⏰ *Hora de entrega:* ${requestedTime}`);
+      lines.push(`💳 *Pago:* ${paymentMethod === 'contanti' ? '💵 Efectivo al entregar' : '💳 Tarjeta (Llevar POS a domicilio)'}`);
+      if (deliveryNotes) lines.push(`📝 *Notas de entrega:* ${deliveryNotes}`);
     }
 
     lines.push(`──────────────────────`);
-    lines.push(`*DETTAGLIO ORDINE:*`);
+    lines.push(`*DETALLE DEL PEDIDO:*`);
 
     items.forEach(item => {
       const price = item.dish.price.table || item.dish.price.standard;
@@ -140,13 +140,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     });
 
     lines.push(`──────────────────────`);
-    lines.push(`Subtotale piatti: €${dishesTotal.toFixed(2)}`);
+    lines.push(`Subtotal platos: €${dishesTotal.toFixed(2)}`);
     if (serviceType === 'delivery') {
-      lines.push(`Spedizione a domicilio: €${DELIVERY_FEE.toFixed(2)}`);
+      lines.push(`Envío a domicilio: €${DELIVERY_FEE.toFixed(2)}`);
     }
-    lines.push(`💰 *TOTALE FINALE: €${finalTotal.toFixed(2)}*`);
+    lines.push(`💰 *TOTAL FINAL: €${finalTotal.toFixed(2)}*`);
     lines.push(`──────────────────────`);
-    lines.push(`_Inviato da Mantas Web App_`);
+    lines.push(`_Enviado desde Mantas Web App_`);
 
     const message = encodeURIComponent(lines.join('\n'));
     const url = `https://wa.me/${RESTAURANT_PHONE}?text=${message}`;
@@ -163,7 +163,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/90 overflow-hidden shadow-2xl flex flex-col h-[90dvh] max-h-[90dvh] touch-pan-y relative"
         onClick={(e) => e.stopPropagation()}
       >
-        
+         
         {/* ============================================================== */}
         {/* MODAL 1: CONFIRMAR ELIMINACIÓN DE PLATO INDIVIDUAL              */}
         {/* ============================================================== */}
@@ -174,10 +174,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <Trash2 size={22} />
               </div>
               <h3 className="text-sm font-black font-serif text-white">
-                Rimuovere piatto?
+                ¿Eliminar plato?
               </h3>
               <p className="text-xs text-zinc-400 mt-1 mb-5 font-medium leading-relaxed">
-                Sei sicuro di voler rimuovere <strong className="text-zinc-100">"{itemToDelete.name}"</strong> dall'ordine?
+                ¿Estás seguro de que deseas eliminar <strong className="text-zinc-100">"{itemToDelete.name}"</strong> del pedido?
               </p>
               <div className="grid grid-cols-2 gap-2.5 w-full">
                 <button
@@ -185,14 +185,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   onClick={() => setItemToDelete(null)}
                   className="py-2.5 px-3 rounded-xl text-xs font-bold bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white active:scale-95 transition-all"
                 >
-                  Annulla
+                  Cancelar
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmDeleteItem}
                   className="py-2.5 px-3 rounded-xl text-xs font-black bg-red-500 hover:bg-red-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.4)] active:scale-95 transition-all"
                 >
-                  Rimuovi
+                  Eliminar
                 </button>
               </div>
             </div>
@@ -209,10 +209,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <AlertTriangle size={22} />
               </div>
               <h3 className="text-sm font-black font-serif text-white">
-                Svuotare tutto il carrello?
+                ¿Vaciar todo el carrito?
               </h3>
               <p className="text-xs text-zinc-400 mt-1 mb-5 font-medium leading-relaxed">
-                Tutti i piatti selezionati verranno rimossi dal tuo ordine.
+                Todos los platos seleccionados serán eliminados de tu pedido.
               </p>
               <div className="grid grid-cols-2 gap-2.5 w-full">
                 <button
@@ -220,25 +220,25 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   onClick={() => setIsClearingCart(false)}
                   className="py-2.5 px-3 rounded-xl text-xs font-bold bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white active:scale-95 transition-all"
                 >
-                  Annulla
+                  Cancelar
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmClearCart}
                   className="py-2.5 px-3 rounded-xl text-xs font-black bg-red-500 hover:bg-red-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.4)] active:scale-95 transition-all"
                 >
-                  Svuota
+                  Vaciar
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Ribete textil andino */}
+        {/* Cinta textil andina */}
         <div className="relative w-full h-3 shrink-0 overflow-hidden shadow-sm">
           <Image
             src={`${BUCKET_URL}/cintaexplorarcarta.png`}
-            alt="Bordo Mantas"
+            alt="Borde Mantas"
             fill
             className="object-cover"
             unoptimized
@@ -250,10 +250,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           {currentStep === 'cart' ? (
             <div>
               <h2 className="text-base font-black font-serif text-white tracking-wide">
-                Il Tuo Ordine
+                Tu Pedido
               </h2>
               <p className="text-[11px] text-zinc-400">
-                {items.length} {items.length === 1 ? 'piatto selezionato' : 'piatti selezionati'}
+                {items.length} {items.length === 1 ? 'plato seleccionado' : 'platos seleccionados'}
               </p>
             </div>
           ) : (
@@ -263,7 +263,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               className="flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 active:scale-95 transition-all"
             >
               <ArrowLeft size={16} />
-              <span>Torna al Carrello</span>
+              <span>Volver al Carrito</span>
             </button>
           )}
 
@@ -275,7 +275,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 className="bg-emerald-500 hover:bg-emerald-400 text-black font-black text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1 active:scale-95 transition-transform shadow-[0_0_10px_rgba(16,185,129,0.35)]"
               >
                 <MessageCircle size={13} strokeWidth={2.5} />
-                <span>Invia (€{finalTotal.toFixed(2)})</span>
+                <span>Enviar (€{finalTotal.toFixed(2)})</span>
               </button>
             )}
 
@@ -285,7 +285,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 onClick={() => setIsClearingCart(true)}
                 className="text-xs text-zinc-400 hover:text-red-400 px-2 py-1 rounded-lg transition-colors"
               >
-                Svuota
+                Vaciar
               </button>
             )}
 
@@ -308,13 +308,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               {items.length === 0 ? (
                 <div className="py-16 text-center text-zinc-500">
                   <span className="text-4xl block mb-2">🛒</span>
-                  <p className="text-sm font-semibold text-zinc-300">Il carrello è vuoto.</p>
-                  <p className="text-xs text-zinc-600 mt-1">Scegli i tuoi piatti dalla carta per continuare.</p>
+                  <p className="text-sm font-semibold text-zinc-300">El carrito está vacío.</p>
+                  <p className="text-xs text-zinc-600 mt-1">Elige tus platos de la carta para continuar.</p>
                 </div>
               ) : (
                 <div className="space-y-2.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block px-1">
-                    Piatti Aggiunti
+                    Platos Agregados
                   </span>
                   {items.map((item) => {
                     const price = item.dish.price.table || item.dish.price.standard;
@@ -367,7 +367,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {items.length > 0 && (
               <div className="p-4 bg-zinc-950 border-t border-zinc-900 flex flex-col gap-3 shrink-0">
                 <div className="flex justify-between items-center px-1">
-                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Subtotale Piatti</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Subtotal Platos</span>
                   <span className="text-xl font-black text-amber-400 font-mono">
                     €{dishesTotal.toFixed(2)}
                   </span>
@@ -378,7 +378,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   onClick={handleProceedToCheckout}
                   className="w-full bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-xs py-3.5 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
                 >
-                  <span className="tracking-wider uppercase">Procedi con i Dati di Consegna</span>
+                  <span className="tracking-wider uppercase">Continuar con los Datos de Entrega</span>
                   <ArrowRight size={16} />
                 </button>
               </div>
@@ -397,7 +397,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* 1. Selector de Modalidad */}
             <div>
               <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1.5 px-1">
-                Modalità di Ricezione
+                Modalidad de Recepción
               </span>
               <div className="grid grid-cols-3 gap-1.5 p-1 bg-zinc-950 rounded-2xl border border-zinc-900">
                 <button
@@ -420,7 +420,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
-                  Asporto
+                  Para Llevar
                 </button>
                 <button
                   type="button"
@@ -431,7 +431,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
-                  Al Tavolo
+                  En Mesa
                 </button>
               </div>
             </div>
@@ -439,7 +439,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* 2. Selector de Método de Pago */}
             <div>
               <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1.5 px-1">
-                Metodo di Pagamento
+                Método de Pago
               </span>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -457,8 +457,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <Banknote size={18} />
                   </div>
                   <div>
-                    <span className="text-xs font-black block leading-tight">Contanti</span>
-                    <span className="text-[9px] text-zinc-500">Alla consegna</span>
+                    <span className="text-xs font-black block leading-tight">Efectivo</span>
+                    <span className="text-[9px] text-zinc-500">Al entregar</span>
                   </div>
                 </button>
 
@@ -477,8 +477,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <CreditCard size={18} />
                   </div>
                   <div>
-                    <span className="text-xs font-black block leading-tight">Carta / POS</span>
-                    <span className="text-[9px] text-zinc-500">Portatile a domicilio</span>
+                    <span className="text-xs font-black block leading-tight">Tarjeta / POS</span>
+                    <span className="text-[9px] text-zinc-500">Portátil a domicilio</span>
                   </div>
                 </button>
               </div>
@@ -488,10 +488,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <div className="bg-zinc-950/90 border border-zinc-900 rounded-2xl p-3.5 space-y-2.5 shadow-md">
               <div className="flex justify-between items-center border-b border-zinc-900 pb-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">
-                  Dettaglio Piatti ({items.length})
+                  Detalle de Platos ({items.length})
                 </span>
                 <span className="text-[9px] text-zinc-500 font-medium">
-                  Scorri per vedere tutti
+                  Desliza para ver todos
                 </span>
               </div>
 
@@ -512,7 +512,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           {item.dish.name}
                         </span>
                       </div>
-                      
+                       
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="font-mono text-zinc-300 text-xs font-semibold">
                           €{(price * item.quantity).toFixed(2)}
@@ -520,7 +520,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         <button
                           type="button"
                           onClick={() => setItemToDelete({ id: item.dish.id, name: item.dish.name })}
-                          title="Rimuovi piatto"
+                          title="Eliminar plato"
                           className="w-6 h-6 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 active:bg-red-500/20 flex items-center justify-center transition-colors active:scale-90"
                         >
                           <Trash2 size={13} />
@@ -534,7 +534,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               {/* DESGLOSE FINANCIERO */}
               <div className="pt-2 border-t border-zinc-900 space-y-1.5">
                 <div className="flex justify-between items-center text-xs text-zinc-400">
-                  <span>Subtotale Piatti</span>
+                  <span>Subtotal Platos</span>
                   <span className="font-mono font-semibold text-zinc-200">€{dishesTotal.toFixed(2)}</span>
                 </div>
 
@@ -542,14 +542,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <div className="flex justify-between items-center text-xs text-amber-400/90 font-medium pt-1 border-t border-zinc-900/80">
                     <span className="flex items-center gap-1.5">
                       <Bike size={13} className="text-amber-400" />
-                      Costo Spedizione Delivery
+                      Costo de Envío Delivery
                     </span>
                     <span className="font-mono font-bold">+ €{DELIVERY_FEE.toFixed(2)}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between items-center text-sm font-black text-white pt-1.5 border-t border-zinc-800">
-                  <span>Totale da Pagare</span>
+                  <span>Total a Pagar</span>
                   <span className="text-base text-amber-400 font-mono">€{finalTotal.toFixed(2)}</span>
                 </div>
               </div>
@@ -564,14 +564,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                   >
                     <User size={13} className="text-amber-400" />
-                    Nome e Cognome *
+                    Nombre y Apellido *
                   </label>
                   <input
                     id="delivery-name"
                     type="text"
                     autoComplete="name"
                     enterKeyHint="next"
-                    placeholder="es. Mario Rossi"
+                    placeholder="ej. Mario Rossi"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
@@ -585,14 +585,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
                       <MapPin size={13} className="text-amber-400" />
-                      Via / Indirizzo *
+                      Calle / Dirección *
                     </label>
                     <input
                       id="delivery-address"
                       type="text"
                       autoComplete="street-address"
                       enterKeyHint="next"
-                      placeholder="es. Via Grassi"
+                      placeholder="ej. Via Grassi"
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
@@ -603,13 +603,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       htmlFor="delivery-civic" 
                       className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer"
                     >
-                      N° Civico *
+                      N° Cívico *
                     </label>
                     <input
                       id="delivery-civic"
                       type="text"
                       enterKeyHint="next"
-                      placeholder="es. 5"
+                      placeholder="ej. 5"
                       value={civicNumber}
                       onChange={(e) => setCivicNumber(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 transition-all"
@@ -624,13 +624,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
                       <Bell size={13} className="text-zinc-400" />
-                      Citofono
+                      Timbre / Intercomunicador
                     </label>
                     <input
                       id="delivery-intercom"
                       type="text"
                       enterKeyHint="next"
-                      placeholder="es. Rossi int. 4"
+                      placeholder="ej. Rossi int. 4"
                       value={intercom}
                       onChange={(e) => setIntercom(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
@@ -642,13 +642,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                     >
                       <Clock size={13} className="text-zinc-400" />
-                      Orario desiderato
+                      Hora deseada
                     </label>
                     <input
                       id="delivery-time"
                       type="text"
                       enterKeyHint="next"
-                      placeholder="es. 20:30"
+                      placeholder="ej. 20:30"
                       value={requestedTime}
                       onChange={(e) => setRequestedTime(e.target.value)}
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
@@ -662,13 +662,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                   >
                     <FileText size={13} className="text-zinc-400" />
-                    Note consegna (Scala, Piano...)
+                    Notas de entrega (Escalera, Piso...)
                   </label>
                   <input
                     id="delivery-notes"
                     type="text"
                     enterKeyHint="send"
-                    placeholder="es. Scala B, 2° piano..."
+                    placeholder="ej. Escalera B, 2° piso..."
                     value={deliveryNotes}
                     onChange={(e) => setDeliveryNotes(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
@@ -677,7 +677,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             )}
 
-            {/* Formulario Asporto */}
+            {/* Formulario Para Llevar (Asporto) */}
             {serviceType === 'llevar' && (
               <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
                 <div>
@@ -686,13 +686,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                   >
                     <User size={13} className="text-amber-400" />
-                    Nome per il ritiro *
+                    Nombre para el retiro *
                   </label>
                   <input
                     id="asporto-name"
                     type="text"
                     enterKeyHint="next"
-                    placeholder="es. Mario"
+                    placeholder="ej. Mario"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
@@ -704,13 +704,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     className="text-xs font-bold text-zinc-300 mb-1 cursor-pointer flex items-center gap-1.5"
                   >
                     <Clock size={13} className="text-zinc-400" />
-                    Orario di ritiro
+                    Hora de retiro
                   </label>
                   <input
                     id="asporto-time"
                     type="text"
                     enterKeyHint="send"
-                    placeholder="es. tra 25 minuti / 19:45"
+                    placeholder="ej. en 25 minutos / 19:45"
                     value={requestedTime}
                     onChange={(e) => setRequestedTime(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
@@ -719,7 +719,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             )}
 
-            {/* Formulario Al Tavolo */}
+            {/* Formulario En Mesa */}
             {serviceType === 'mesa' && (
               <div className="space-y-3 bg-zinc-950/80 p-3.5 rounded-2xl border border-zinc-900">
                 <div>
@@ -727,13 +727,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     htmlFor="tavolo-num" 
                     className="block text-xs font-bold text-zinc-300 mb-1 cursor-pointer"
                   >
-                    Numero di Tavolo *
+                    Número de Mesa *
                   </label>
                   <input
                     id="tavolo-num"
                     type="text"
                     enterKeyHint="send"
-                    placeholder="es. Tavolo 5"
+                    placeholder="ej. Mesa 5"
                     value={tableNumber}
                     onChange={(e) => setTableNumber(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 transition-all"
@@ -749,10 +749,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3.5 px-4 rounded-2xl active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.45)]"
               >
                 <MessageCircle size={18} strokeWidth={2.5} />
-                <span className="tracking-wider uppercase">Invia Ordine su WhatsApp (€{finalTotal.toFixed(2)})</span>
+                <span className="tracking-wider uppercase">Enviar Pedido por WhatsApp (€{finalTotal.toFixed(2)})</span>
               </button>
               <p className="text-[10px] text-zinc-500 text-center mt-2">
-                Conferma via WhatsApp • Pagamento: {paymentMethod === 'contanti' ? 'Contanti alla consegna' : 'Carta con POS a domicilio'}
+                Confirmación vía WhatsApp • Pago: {paymentMethod === 'contanti' ? 'Efectivo al entregar' : 'Tarjeta con POS a domicilio'}
               </p>
             </div>
 

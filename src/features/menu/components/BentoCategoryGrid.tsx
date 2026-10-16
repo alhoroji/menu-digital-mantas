@@ -7,11 +7,11 @@ import Image from 'next/image';
 const BUCKET_URL = "https://jclzrvizljglhhndkmvo.supabase.co/storage/v1/object/public/platos";
 
 // Luces Neón Ultra-Finas y Específicas por Categoría
-const NEON_MARINOS   = '0 0 3px #00e5ff, 0 0 9px rgba(0, 229, 255, 0.55)';
-const NEON_CRIOLLOS  = '0 0 3px #ff1744, 0 0 9px rgba(255, 23, 68, 0.55)';
-const NEON_POLLO     = '0 0 3px #ffab00, 0 0 9px rgba(255, 171, 0, 0.55)';
-const NEON_ENTRADAS  = '0 0 3px #10b981, 0 0 8px rgba(16, 185, 129, 0.5)';
-const NEON_BEBIDAS   = '0 0 3px #e040fb, 0 0 9px rgba(224, 64, 251, 0.55)';
+const NEON_MARINOS     = '0 0 3px #00e5ff, 0 0 9px rgba(0, 229, 255, 0.55)';
+const NEON_CRIOLLOS    = '0 0 3px #ff1744, 0 0 9px rgba(255, 23, 68, 0.55)';
+const NEON_POLLO       = '0 0 3px #ffab00, 0 0 9px rgba(255, 171, 0, 0.55)';
+const NEON_ENTRADAS    = '0 0 3px #10b981, 0 0 8px rgba(16, 185, 129, 0.5)';
+const NEON_BEBIDAS     = '0 0 3px #e040fb, 0 0 9px rgba(224, 64, 251, 0.55)';
 const NEON_DESAYUNOS = '0 0 3px #f59e0b, 0 0 9px rgba(245, 158, 11, 0.55)';
 
 export function BentoCategoryGrid() {

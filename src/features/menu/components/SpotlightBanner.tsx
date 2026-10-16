@@ -33,7 +33,7 @@ export function SpotlightBanner() {
   const router = useRouter();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [slides, setSlides] = useState<BannerSlide[]>([]);
-  
+   
   // Estado para el modal de detalles
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState<SpotlightModalData | null>(null);
@@ -57,9 +57,9 @@ export function SpotlightBanner() {
       // 1. Menú del Día
       {
         id: 'menu',
-        badge: `✦ MENU DEL GIORNO • ${menuData.dayName.toUpperCase()}`,
-        title: `Menù ${menuData.dayName} — €${menuData.price.toFixed(2)}`,
-        subtitle: `${menuData.destacado}. Tocca per vedere la carta.`,
+        badge: `✦ MENÚ DEL DÍA • ${menuData.dayName.toUpperCase()}`,
+        title: `Menú ${menuData.dayName} — €${menuData.price.toFixed(2)}`,
+        subtitle: `${menuData.destacado}. Toca para ver la carta.`,
         image: menuData.image,
         accentColor: '#f59e0b',
         icon: 'menu',
@@ -164,7 +164,7 @@ export function SpotlightBanner() {
 
         {/* Contenedor de la Imagen */}
         <div className="relative bg-[#0d0d12] rounded-[1.7rem] overflow-hidden h-[14.5rem] flex flex-col justify-end p-5">
-          
+           
           {/* Imágenes apiladas con transición suave */}
           {slides.map((slide, index) => (
             <div
@@ -209,14 +209,14 @@ export function SpotlightBanner() {
 
           {/* Textos y Badges */}
           <div className="relative z-20 flex flex-col items-start select-none transition-all duration-300">
-            
+             
             <div className="flex items-center gap-1.5 bg-[#0a0a0f]/90 border border-white/15 backdrop-blur-md rounded-full px-2.5 py-1 mb-2 shadow-md">
               {renderIcon()}
               <span className="text-[9px] font-black uppercase tracking-wider text-zinc-200">
                 {currentSlide.badge}
               </span>
               <span className="text-[9px] bg-amber-400 text-black px-1.5 py-0.2 rounded-full font-black animate-pulse">
-                VEDI DETTAGLI
+                VER DETALLES
               </span>
             </div>
 

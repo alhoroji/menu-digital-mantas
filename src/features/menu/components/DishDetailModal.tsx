@@ -41,10 +41,10 @@ export function DishDetailModal({ dish, isOpen, onClose, onConfirm }: DishDetail
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      
+       
       {/* Contenedor del Modal con Borde Superior Andino */}
       <div className="w-full sm:max-w-md bg-[#0a0a0f] rounded-t-[2.2rem] sm:rounded-[2.2rem] border border-zinc-800/80 overflow-hidden shadow-[0_-10px_35px_rgba(0,0,0,0.9)] flex flex-col max-h-[92vh]">
-        
+         
         {/* Cinta textil andina en la corona del modal */}
         <div className="relative w-full h-3 shrink-0 overflow-hidden shadow-sm">
           <Image
@@ -72,7 +72,7 @@ export function DishDetailModal({ dish, isOpen, onClose, onConfirm }: DishDetail
                 <UtensilsCrossed size={24} />
               </div>
               <span className="text-[11px] font-bold tracking-widest uppercase text-zinc-500">
-                Mantas Restaurante
+                Restaurante Mantas
               </span>
             </div>
           )}
@@ -122,7 +122,7 @@ export function DishDetailModal({ dish, isOpen, onClose, onConfirm }: DishDetail
 
         {/* Barra Inferior: Selector de Cantidad y Botón de Confirmación */}
         <div className="p-4 bg-zinc-950/95 border-t border-zinc-900 flex items-center gap-3 shrink-0">
-          
+           
           {/* Selector de cantidad [-] 1 [+] */}
           <div className="flex items-center justify-between w-28 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-2.5 shadow-inner">
             <button

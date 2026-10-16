@@ -43,32 +43,32 @@ export function SpotlightDetailModal({
     switch (data.type) {
       case 'menu':
         messageText = 
-          `*🍽️ ORDINE MENU DEL GIORNO (${data.dailyData?.dayName.toUpperCase()})*\n` +
-          `Vorrei ordinare il Menù Fisso di pranzo (€${data.dailyData?.price.toFixed(2)}).\n` +
-          `Include: ${data.dailyData?.incluye}.`;
+          `*🍽️ PEDIDO MENÚ DEL DÍA (${data.dailyData?.dayName.toUpperCase()})*\n` +
+          `Me gustaría pedir el Menú Fijo de almuerzo (€${data.dailyData?.price.toFixed(2)}).\n` +
+          `Incluye: ${data.dailyData?.incluye}.`;
         break;
 
       case 'promo':
         messageText = 
-          `*🌙 PROMOZIONE NOTTE - MANTAS MILANO*\n` +
-          `Vorrei approfittare della promozione: *${data.title}*.\n` +
-          `Dettaglio: ${data.promoData?.subtitle || ''}`;
+          `*🌙 PROMOCIÓN NOCTURNA - MANTAS MILANO*\n` +
+          `Me gustaría aprovechar la promoción: *${data.title}*.\n` +
+          `Detalle: ${data.promoData?.subtitle || ''}`;
         break;
 
       case 'chef':
         messageText = 
-          `*✨ ORDINE PIATTO CONSIGLIATO*\n` +
-          `Vorrei ordinare il vostro celebre *Ceviche Mixto Mantas* (€20.00).\n` +
-          `Pesca del giorno con latte di tigre tradizionale.`;
+          `*✨ PEDIDO PLATO RECOMENDADO*\n` +
+          `Me gustaría pedir su célebre *Ceviche Mixto Mantas* (€20.00).\n` +
+          `Pesca del día con leche de tigre tradicional.`;
         break;
 
       case 'desayuno':
         messageText = 
-          `*☕ ORDINE COLAZIONE DOMENICALE*\n` +
-          `Vorrei ordinare i Desayunos Criollos a domicilio:\n` +
-          `• Pan con Chicharrón Tradizionale\n` +
-          `• Tamal Criollo con Sarza\n` +
-          `• Succo di frutta fresca`;
+          `*☕ PEDIDO DESAYUNO DOMINICAL*\n` +
+          `Me gustaría pedir los Desayunos Criollos a domicilio:\n` +
+          `• Pan con Chicharrón Tradicional\n` +
+          `• Tamal Criollo con Salsa\n` +
+          `• Jugo de fruta fresca`;
         break;
     }
 
@@ -140,7 +140,7 @@ export function SpotlightDetailModal({
             <div className="space-y-3">
               <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 block">
-                  1. Scegli il tuo Primo (Entrata)
+                  1. Elige tu Primer Plato (Entrada)
                 </span>
                 <div className="space-y-1.5">
                   {data.dailyData.entradas.map((item, idx) => (
@@ -154,7 +154,7 @@ export function SpotlightDetailModal({
 
               <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 block">
-                  2. Scegli il Secondo Piatto
+                  2. Elige tu Segundo Plato
                 </span>
                 <div className="space-y-1.5">
                   {data.dailyData.segundos.map((item, idx) => (
@@ -179,7 +179,7 @@ export function SpotlightDetailModal({
             <div className="space-y-3">
               <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-fuchsia-400 block">
-                  Dettagli dell'Offerta
+                  Detalles de la Oferta
                 </span>
                 <p className="text-sm font-bold text-white">
                   {data.promoData?.title}
@@ -192,10 +192,10 @@ export function SpotlightDetailModal({
               <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs text-zinc-300 font-semibold">
                   <Clock size={14} className="text-fuchsia-400" />
-                  <span>Disponibile dalle 15:30 alle 22:00</span>
+                  <span>Disponible de 15:30 a 22:00</span>
                 </div>
                 <p className="text-[11px] text-zinc-400 pl-5">
-                  Valido per consumazione al tavolo o asporto da Mantas Milano.
+                  Válido para consumo en mesa o para llevar de Mantas Milano.
                 </p>
               </div>
             </div>
@@ -207,25 +207,25 @@ export function SpotlightDetailModal({
               <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
-                    Piatto Iconico Peruano
+                    Plato Icónico Peruano
                   </span>
                   <span className="text-base font-black text-amber-400 font-mono">€20.00</span>
                 </div>
                 <p className="text-sm font-serif font-black text-white">
-                  Ceviche Mixto Tradizionale
+                  Ceviche Mixto Tradicional
                 </p>
                 <p className="text-xs text-zinc-300 leading-relaxed">
-                  Pesca del giorno marinata con lime fresco appena spremuto, ricca selezione di frutti di mare, cipolla rossa croccante, mais choclo peruviano e patata dolce glassata.
+                  Pesca del día marinada con limón fresco recién exprimido, selecta variedad de mariscos, cebolla roja crujiente, choclo peruano y camote glaseado.
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-center text-xs">
                 <div className="p-2.5 rounded-xl bg-zinc-900/50 border border-zinc-800">
-                  <span className="text-[10px] text-zinc-500 block uppercase">Origine</span>
-                  <span className="font-bold text-zinc-200">Costa del Perù</span>
+                  <span className="text-[10px] text-zinc-500 block uppercase">Origen</span>
+                  <span className="font-bold text-zinc-200">Costa del Perú</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-zinc-900/50 border border-zinc-800">
-                  <span className="text-[10px] text-zinc-500 block uppercase">Abbinamento</span>
+                  <span className="text-[10px] text-zinc-500 block uppercase">Maridaje</span>
                   <span className="font-bold text-zinc-200">Inca Kola o Pisco Sour</span>
                 </div>
               </div>
@@ -237,35 +237,35 @@ export function SpotlightDetailModal({
             <div className="space-y-3">
               <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 block">
-                  La Vera Colazione Domenicale Peruviana
+                  El Verdadero Desayuno Dominical Peruano
                 </span>
                 <p className="text-xs text-zinc-300 leading-relaxed">
-                  Ogni domenica mattina prepariamo la tradizionale colazione criolla da gustare in locale o comodamente a casa tua:
+                  Cada domingo por la mañana preparamos el tradicional desayuno criollo para disfrutar en el local o cómodamente en casa:
                 </p>
                 <div className="space-y-1.5 pt-1">
                   <div className="flex items-center gap-2 text-xs text-zinc-200">
                     <CheckCircle2 size={13} className="text-amber-400 shrink-0" />
-                    <span><strong>Pan con Chicharrón:</strong> Pancetta dorata, patata dolce e sarza</span>
+                    <span><strong>Pan con Chicharrón:</strong> Cerdo dorado, camote y salsa criolla</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-zinc-200">
                     <CheckCircle2 size={13} className="text-amber-400 shrink-0" />
-                    <span><strong>Tamales Criollos:</strong> Di mais ripieni in foglia di banano</span>
+                    <span><strong>Tamales Criollos:</strong> De maíz rellenos en hoja de plátano</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-zinc-200">
                     <CheckCircle2 size={13} className="text-amber-400 shrink-0" />
-                    <span><strong>Succhi Naturali:</strong> Papaya, Surtido o Jugo Especial</span>
+                    <span><strong>Jugos Naturales:</strong> Papaya, Surtido o Jugo Especial</span>
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider block">Orario Colazione</span>
-                  <span className="text-xs font-bold text-white">Domenica dalle 08:00 alle 13:00</span>
+                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider block">Horario de Desayuno</span>
+                  <span className="text-xs font-bold text-white">Domingo de 08:00 a 13:00</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider block">Consegna</span>
-                  <span className="text-xs font-bold text-white">Delivery Attivo</span>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider block">Entrega</span>
+                  <span className="text-xs font-bold text-white">Delivery Activo</span>
                 </div>
               </div>
 
@@ -278,7 +278,7 @@ export function SpotlightDetailModal({
                   }}
                   className="w-full py-2.5 px-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
                 >
-                  <span>Esplora tutti i piatti della colazione</span>
+                  <span>Explorar todos los platos de desayuno</span>
                   <ChevronRight size={14} className="text-amber-400" />
                 </button>
               )}
@@ -294,7 +294,7 @@ export function SpotlightDetailModal({
             className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs py-3.5 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.35)]"
           >
             <MessageCircle size={17} strokeWidth={2.5} />
-            <span className="tracking-wider uppercase">Richiedi / Ordina su WhatsApp</span>
+            <span className="tracking-wider uppercase">Pedir / Consultar por WhatsApp</span>
           </button>
         </div>
 

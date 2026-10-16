@@ -20,9 +20,9 @@ export function DailyMenuModal({ isOpen, onClose, data }: DailyMenuModalProps) {
 
   const handleOrderWhatsApp = () => {
     const text = encodeURIComponent(
-      `*🍽️ ORDINE MENU DEL GIORNO (${data.dayName.toUpperCase()})*\n` +
-      `Vorrei ordinare il Menù Fisso di pranzo (€${data.price.toFixed(2)}).\n` +
-      `Include: ${data.incluye}.`
+      `*🍽️ PEDIDO MENÚ DEL DÍA (${data.dayName.toUpperCase()})*\n` +
+      `Me gustaría pedir el Menú Fijo de almuerzo (€${data.price.toFixed(2)}).\n` +
+      `Incluye: ${data.incluye}.`
     );
     window.open(`https://wa.me/${RESTAURANT_PHONE}?text=${text}`, '_blank');
   };
@@ -40,7 +40,7 @@ export function DailyMenuModal({ isOpen, onClose, data }: DailyMenuModalProps) {
         <div className="relative w-full h-3 shrink-0 overflow-hidden shadow-sm">
           <Image
             src={`${BUCKET_URL}/cintaexplorarcarta.png`}
-            alt="Bordo Mantas"
+            alt="Borde Mantas"
             fill
             className="object-cover"
             unoptimized
@@ -53,10 +53,10 @@ export function DailyMenuModal({ isOpen, onClose, data }: DailyMenuModalProps) {
             <Utensils size={18} className="text-amber-400" />
             <div>
               <h2 className="text-base font-black font-serif text-white tracking-wide">
-                Menù del Giorno • {data.dayName}
+                Menú del Día • {data.dayName}
               </h2>
               <span className="text-xs text-amber-400 font-mono font-bold">
-                Formula Completa €{data.price.toFixed(2)}
+                Fórmula Completa €{data.price.toFixed(2)}
               </span>
             </div>
           </div>
@@ -74,7 +74,7 @@ export function DailyMenuModal({ isOpen, onClose, data }: DailyMenuModalProps) {
           {/* Entradas */}
           <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 space-y-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 block">
-              1. Scegli il tuo Primo (Entrata)
+              1. Elige tu Primer Plato (Entrada)
             </span>
             <div className="space-y-1.5">
               {data.entradas.map((entrada, idx) => (
@@ -89,7 +89,7 @@ export function DailyMenuModal({ isOpen, onClose, data }: DailyMenuModalProps) {
           {/* Segundos */}
           <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 space-y-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 block">
-              2. Scegli il Secondo Piatto
+              2. Elige tu Segundo Plato
             </span>
             <div className="space-y-1.5">
               {data.segundos.map((segundo, idx) => (
@@ -117,7 +117,7 @@ export function DailyMenuModal({ isOpen, onClose, data }: DailyMenuModalProps) {
             className="w-full bg-gradient-to-r from-amber-500 to-amber-400 text-black font-black text-xs py-3.5 px-4 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.35)]"
           >
             <MessageCircle size={17} strokeWidth={2.5} />
-            <span className="tracking-wider uppercase">Ordina Menù Pranzo su WhatsApp</span>
+            <span className="tracking-wider uppercase">Pedir Menú de Almuerzo por WhatsApp</span>
           </button>
         </div>
 

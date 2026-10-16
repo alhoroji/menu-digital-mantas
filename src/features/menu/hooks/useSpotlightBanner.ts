@@ -58,7 +58,7 @@ export function useSpotlightBanner(): SpotlightState {
           title: SUNDAY_BREAKFAST_PROMO.title,
           subtitle: SUNDAY_BREAKFAST_PROMO.subtitle,
           image: SUNDAY_BREAKFAST_PROMO.image,
-          priceBadge: "Delivery Disponibile",
+          priceBadge: "Delivery Disponible",
           canOpenModal: false
         });
         return;
@@ -91,9 +91,9 @@ export function useSpotlightBanner(): SpotlightState {
         const menu = DAILY_MENUS[targetDailyKey];
         setState({
           mode: 'menu_del_dia',
-          badge: `✦ MENU DEL GIORNO • ${menu.dayName.toUpperCase()}`,
-          title: `Menù ${menu.dayName} — €${menu.price.toFixed(2)}`,
-          subtitle: `${menu.destacado}. Tocca per vedere la carta.`,
+          badge: `✦ MENÚ DEL DÍA • ${menu.dayName.toUpperCase()}`,
+          title: `Menú ${menu.dayName} — €${menu.price.toFixed(2)}`,
+          subtitle: `${menu.destacado}. Toca para ver la carta.`,
           image: menu.image,
           priceBadge: `€${menu.price.toFixed(2)}`,
           dailyMenuData: menu,
