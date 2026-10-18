@@ -44,9 +44,15 @@ export default function TenantMenuPage({ params }: { params: { restaurante_slug:
           </span>
         </div>
 
-        <button className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800/80 flex items-center justify-center shadow-lg active:scale-90 transition-transform relative">
-          <BellRing size={18} className="text-zinc-400" />
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-red-500 border border-zinc-900 animate-pulse" />
+        {/* --- CAMPANA INTELIGENTE --- */}
+        <button 
+          onClick={() => window.dispatchEvent(new Event('abrirOfertaCampana'))}
+          className="w-10 h-10 rounded-full bg-zinc-900 border border-amber-500/40 hover:bg-zinc-800 flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.25)] active:scale-90 transition-all relative group"
+        >
+          <BellRing size={19} className="text-amber-400 animate-pulse drop-shadow-[0_0_5px_rgba(245,158,11,0.6)]" />
+          {/* El punto rojo parpadeante "Ping" para simular notificación */}
+          <span className="absolute top-2 right-2.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-zinc-900 animate-ping" />
+          <span className="absolute top-2 right-2.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-zinc-900" />
         </button>
       </header>
 

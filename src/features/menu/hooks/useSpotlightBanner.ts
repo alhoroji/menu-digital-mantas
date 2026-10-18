@@ -25,11 +25,10 @@ export interface SpotlightState {
   promoNightData?: PromoNightItem;
   canOpenModal: boolean;
   shouldAutoOpen: boolean;
-  sessionKey: string;
+  endTime?: Date; // <-- Añadido para el cronómetro
 }
 
 export function useSpotlightBanner(): SpotlightState {
-  // Estados para almacenar los datos en vivo desde Supabase
   const [dbDailyMenus, setDbDailyMenus] = useState<Record<string, DailyMenuItem>>(DAILY_MENUS);
   const [dbNightPromos, setDbNightPromos] = useState<Record<number, PromoNightItem>>(NIGHT_PROMOS);
 
@@ -40,11 +39,9 @@ export function useSpotlightBanner(): SpotlightState {
     subtitle: CHEF_RECOMMENDATION.subtitle,
     image: CHEF_RECOMMENDATION.image,
     canOpenModal: true,
-    shouldAutoOpen: false,
-    sessionKey: 'chef_default'
+    shouldAutoOpen: false
   });
 
-  // 1. Sincronizar con Supabase para reflejar cambios del admin en tiempo real
   useEffect(() => {
     async function fetchLivePromos() {
       try {
@@ -83,45 +80,45 @@ export function useSpotlightBanner(): SpotlightState {
           setDbNightPromos(mappedPromos);
         }
       } catch (err) {
-        console.error('Usando configuración local de respaldo para Spotlight:', err);
+        console.error('Error Supabase Spotlight:', err);
       }
     }
     fetchLivePromos();
   }, []);
 
-  // 2. Evaluar horario y determinar qué pantalla emergente mostrar
   useEffect(() => {
     const calculateBanner = () => {
       const now = new Date();
-      const day = now.getDay(); // 0 = Domingo, 1 = Lunes, 2 = Martes, etc.
+      const day = now.getDay();
       const hours = now.getHours();
       const minutes = now.getMinutes();
-      const timeDecimal = hours + minutes / 60; // Ej: 12:30 = 12.5
+      const timeDecimal = hours + minutes / 60; 
 
-      // -------------------------------------------------------------
-      // REGLA 1: DESAYUNOS DE DOMINGO (Sábado 22:00 a Domingo 13:00)
-      // -------------------------------------------------------------
-      const isSundayBreakfastTime = (day === 6 && timeDecimal >= 22.0) || (day === 0 && timeDecimal < 13.0);
-      if (isSundayBreakfastTime) {
+      // Función para calcular la hora exacta de fin
+      const getEndTime = (h: number, m: number) => {
+        const d = new Date();
+        d.setHours(h, m, 0, 0);
+        return d;
+      };
+
+      // 1. DESAYUNOS (Domingo de 09:00 a 12:30)
+      if (day === 0 && timeDecimal >= 9.0 && timeDecimal < 12.5) {
         setState({
           mode: 'desayuno_domingo',
           badge: SUNDAY_BREAKFAST_PROMO.badge,
           title: SUNDAY_BREAKFAST_PROMO.title,
-          subtitle: 'Toca para ver los desayunos y opciones de delivery.',
+          subtitle: 'Toca para ver los desayunos y delivery.',
           image: SUNDAY_BREAKFAST_PROMO.image,
-          priceBadge: 'Delivery Disponible',
+          priceBadge: 'Delivery',
           canOpenModal: true,
-          shouldAutoOpen: true, // Salta solo al entrar
-          sessionKey: 'mantas_auto_desayuno'
+          shouldAutoOpen: true,
+          endTime: getEndTime(12, 30) // Termina a las 12:30
         });
         return;
       }
 
-      // -------------------------------------------------------------
-      // REGLA 2: MENÚ DEL DÍA (Martes a Viernes, de 10:30 a 15:30)
-      // -------------------------------------------------------------
+      // 2. MENÚ DEL DÍA (Martes a Viernes, de 10:30 a 15:30)
       let targetDailyKey: 'martes' | 'miercoles' | 'jueves' | 'viernes' | null = null;
-      
       if (timeDecimal >= 10.5 && timeDecimal < 15.5) {
         if (day === 2) targetDailyKey = 'martes';
         else if (day === 3) targetDailyKey = 'miercoles';
@@ -135,49 +132,44 @@ export function useSpotlightBanner(): SpotlightState {
           mode: 'menu_del_dia',
           badge: `✦ MENÚ DEL DÍA • ${menu.dayName.toUpperCase()}`,
           title: `Menú ${menu.dayName} — €${menu.price.toFixed(2)}`,
-          subtitle: `${menu.destacado}. Toca para ver la lista completa.`,
+          subtitle: `${menu.destacado}. Toca para ver la lista.`,
           image: menu.image,
           priceBadge: `€${menu.price.toFixed(2)}`,
           dailyMenuData: menu,
           canOpenModal: true,
-          shouldAutoOpen: true, // Salta solo al entrar
-          sessionKey: `mantas_auto_menu_${targetDailyKey}`
+          shouldAutoOpen: true,
+          endTime: getEndTime(15, 30) // Termina a las 15:30
         });
         return;
       }
 
-      // -------------------------------------------------------------
-      // REGLA 3: PROMOCIONES DE NOCHE (De 18:30 a 23:30)
-      // -------------------------------------------------------------
+      // 3. PROMOS DE NOCHE (De 18:30 a 23:30)
       if (timeDecimal >= 18.5 && timeDecimal < 23.5) {
         const promo = dbNightPromos[day] || dbNightPromos[2];
         setState({
           mode: 'promo_noche',
           badge: `🌙 ${promo.badge}`,
           title: promo.title,
-          subtitle: `${promo.subtitle}. Toca para ver los detalles.`,
+          subtitle: `${promo.subtitle}. Toca para ver detalles.`,
           image: promo.image,
           priceBadge: promo.priceTag,
           promoNightData: promo,
           canOpenModal: true,
-          shouldAutoOpen: true, // Salta solo al entrar
-          sessionKey: `mantas_auto_noche_${day}`
+          shouldAutoOpen: true,
+          endTime: getEndTime(23, 30) // Termina a las 23:30
         });
         return;
       }
 
-      // -------------------------------------------------------------
-      // REGLA 4: RECOMENDACIÓN DEL CHEF (Fuera de horario de almuerzo/cena)
-      // -------------------------------------------------------------
+      // 4. FUERA DE HORARIO (Chef)
       setState({
         mode: 'chef',
         badge: CHEF_RECOMMENDATION.badge,
         title: CHEF_RECOMMENDATION.title,
-        subtitle: 'Toca para ver nuestra sugerencia especial.',
+        subtitle: 'Toca para ver nuestra sugerencia.',
         image: CHEF_RECOMMENDATION.image,
         canOpenModal: true,
-        shouldAutoOpen: false, // NO salta solo, el cliente debe tocar el banner
-        sessionKey: 'mantas_auto_chef'
+        shouldAutoOpen: false
       });
     };
 
