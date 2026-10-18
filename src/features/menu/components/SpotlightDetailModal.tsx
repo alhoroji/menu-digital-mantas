@@ -86,8 +86,7 @@ export function SpotlightDetailModal({
         messageText = `*☕ PEDIDO DESAYUNO DOMINICAL*\nMe gustaría pedir los Desayunos Criollos a domicilio.`;
         break;
     }
-    window.open(`https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(messageText)}`, '_blank');
-  };
+window.location.href = `https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(messageText)}`;  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-md animate-in fade-in duration-200 p-0 sm:p-4" onClick={onClose}>
